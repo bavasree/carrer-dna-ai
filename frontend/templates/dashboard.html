@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — Career DNA AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Header Banner -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card bg-surface-card p-4 p-md-5 border border-subtle shadow-lg position-relative overflow-hidden">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <span class="badge badge-primary-subtle text-uppercase mb-2">STUDENT INTELLIGENCE HUB</span>
+                        <h2 class="display-6 fw-bold text-light mb-1">Welcome, <span id="dashUserName" class="text-gradient">Student</span>!</h2>
+                        <p class="text-secondary mb-3" id="dashUserHeadline">Computer Science Student &bull; Full-Stack & AI</p>
+
+                        <!-- Profile Completeness Widget -->
+                        <div class="d-flex align-items-center gap-3 max-w-md">
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                    <span>Profile Completeness</span>
+                                    <span id="profileCompletenessText" class="fw-bold text-light">0%</span>
+                                </div>
+                                <div class="progress bg-surface" style="height: 6px;">
+                                    <div id="profileCompletenessBar" class="progress-bar bg-gradient-primary" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <a href="/profile" class="btn btn-sm btn-glass"><i class="bi bi-pencil me-1"></i>Edit Profile</a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                            <a href="/career-analysis" class="btn btn-gradient-primary">
+                                <i class="bi bi-stars me-1"></i>Run AI Analysis
+                            </a>
+                            <a href="/recommendations" class="btn btn-glass">
+                                <i class="bi bi-compass me-1"></i>Explore Matches
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Metrics & AI Insights Row -->
+    <div class="row g-4 mb-4">
+        <!-- 1. Career Readiness Gauge -->
+        <div class="col-lg-4">
+            <div class="card bg-surface-card p-4 text-center h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="text-secondary text-uppercase fw-bold small mb-0">Career Readiness Score</h6>
+                        <a href="/career-analysis" class="small text-primary text-decoration-none">View Diagnostics &rarr;</a>
+                    </div>
+                    <div class="position-relative mx-auto my-2" style="width: 170px; height: 130px;">
+                        <canvas id="readinessGaugeChart"></canvas>
+                        <div class="position-absolute top-50 start-50 translate-middle mt-2 text-center">
+                            <span class="display-6 fw-bold text-light" id="dashReadinessScore">--</span>
+                            <small class="d-block text-muted" style="font-size: 0.7rem;">out of 100</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-3 bg-surface-elevated rounded-3 border border-subtle text-start mt-3">
+                    <small class="text-light fw-bold d-block mb-1"><i class="bi bi-robot text-primary me-1"></i>AI Assessment</small>
+                    <p class="text-secondary small mb-0" id="dashAISummary" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                        Loading AI diagnostics...
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Application Pipeline Stats -->
+        <div class="col-lg-4">
+            <div class="card bg-surface-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-secondary text-uppercase fw-bold small mb-0">Application Pipeline</h6>
+                    <a href="/applications" class="small text-primary text-decoration-none">Kanban Board &rarr;</a>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-4 text-center p-2 bg-surface-elevated rounded border border-subtle">
+                        <small class="text-muted d-block" style="font-size: 0.72rem;">TOTAL</small>
+                        <span class="fs-4 fw-bold text-light" id="dashStatTotal">0</span>
+                    </div>
+                    <div class="col-4 text-center p-2 bg-surface-elevated rounded border border-subtle">
+                        <small class="text-muted" style="font-size: 0.72rem;">INTERVIEW %</small>
+                        <span class="fs-4 fw-bold text-gradient-secondary" id="dashStatInterview">0%</span>
+                    </div>
+                    <div class="col-4 text-center p-2 bg-surface-elevated rounded border border-subtle">
+                        <small class="text-muted" style="font-size: 0.72rem;">OFFER %</small>
+                        <span class="fs-4 fw-bold text-gradient-accent" id="dashStatOffer">0%</span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="/applications" class="btn btn-sm btn-glass text-center">
+                        <i class="bi bi-kanban me-1"></i>Open Kanban Tracker
+                    </a>
+                    <a href="/resume-builder" class="btn btn-sm btn-glass text-center">
+                        <i class="bi bi-file-earmark-person me-1"></i>Update AI Resume
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Active Roadmap Milestone -->
+        <div class="col-lg-4">
+            <div class="card bg-surface-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-secondary text-uppercase fw-bold small mb-0">Roadmap Progress</h6>
+                        <a href="/roadmap" class="small text-primary text-decoration-none">Full Timeline &rarr;</a>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted mb-1">
+                        <span>Overall Milestone Completion</span>
+                        <span id="dashRoadmapProgressText" class="fw-bold text-light">0%</span>
+                    </div>
+                    <div class="progress bg-surface mb-3" style="height: 6px;">
+                        <div id="dashRoadmapProgressBar" class="progress-bar bg-gradient-secondary" style="width: 0%;"></div>
+                    </div>
+
+                    <ul class="list-group list-group-flush bg-transparent" id="dashRoadmapMilestones">
+                        <li class="list-group-item bg-transparent text-muted small px-0">Loading roadmap stages...</li>
+                    </ul>
+                </div>
+
+                <a href="/roadmap" class="btn btn-sm btn-gradient-secondary w-100 mt-3">
+                    Continue Step-by-Step Path <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Active Hackathons Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card bg-surface-card p-4 border border-subtle">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <span class="badge badge-amber-subtle text-uppercase mb-1" style="font-size: 0.7rem;"><i class="bi bi-laptop me-1"></i>ACTIVE COMPETITIONS</span>
+                        <h4 class="text-light fw-bold mb-0">Upcoming Hackathons</h4>
+                        <p class="text-secondary small mb-0">Only currently active hackathons with open registration deadlines are displayed</p>
+                    </div>
+                    <a href="/recommendations?type=hackathon" class="btn btn-sm btn-glass">View All Hackathons &rarr;</a>
+                </div>
+
+                <div class="row g-3" id="dashHackathonsContainer">
+                    <div class="col-12 py-3 text-center">
+                        <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
+                        <span class="text-muted small ms-2">Loading upcoming hackathons...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations Stream Row -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h4 class="text-light fw-bold mb-0">Top Recommended Opportunities</h4>
+                    <p class="text-secondary small mb-0">Ranked specifically by matching skill overlap with your verified profile</p>
+                </div>
+                <a href="/recommendations" class="btn btn-sm btn-glass">View All Matches &rarr;</a>
+            </div>
+
+            <div id="dashRecommendationsContainer">
+                <div class="p-4 text-center">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

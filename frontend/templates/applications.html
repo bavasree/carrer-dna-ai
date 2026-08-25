@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}Application Tracker & Pipeline — Career DNA AI{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <span class="badge badge-cyan-subtle text-uppercase mb-1">TYPE-AWARE PIPELINE TRACKER</span>
+            <h3 class="fw-bold text-light mb-1">Application & Opportunity Tracker</h3>
+            <p class="text-secondary small mb-0">Track customized recruitment, hackathon rounds, competition stages, and certifications</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-glass" id="syncStatusBtn" title="Automatically synchronizes stages based on dates and deadlines">
+                <i class="bi bi-arrow-repeat me-1"></i>Auto Sync
+            </button>
+            <button class="btn btn-gradient-primary" data-bs-toggle="modal" data-bs-target="#addApplicationModal">
+                <i class="bi bi-plus-lg me-1"></i>Track New Opportunity
+            </button>
+        </div>
+    </div>
+
+    <!-- Pipeline Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card bg-surface-card p-3 text-center border border-subtle">
+                <small class="text-secondary text-uppercase fw-semibold d-block">TOTAL TRACKED</small>
+                <span class="fs-4 fw-bold text-light" id="statTotalApps">0</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card bg-surface-card p-3 text-center border border-subtle">
+                <small class="text-secondary text-uppercase fw-semibold d-block">ACTIVE PIPELINE</small>
+                <span class="fs-4 fw-bold text-primary" id="statActivePipeline">0</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card bg-surface-card p-3 text-center border border-subtle">
+                <small class="text-secondary text-uppercase fw-semibold d-block">INTERVIEW / ADVANCEMENT RATE</small>
+                <span class="fs-4 fw-bold text-gradient-secondary" id="statInterviewRate">0%</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card bg-surface-card p-3 text-center border border-subtle">
+                <small class="text-secondary text-uppercase fw-semibold d-block">OFFER / WINNER RATE</small>
+                <span class="fs-4 fw-bold text-gradient-accent" id="statOfferRate">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workflow Selector Tabs -->
+    <div class="card bg-surface-card p-2 mb-4 border border-subtle">
+        <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+            <div class="d-flex flex-wrap gap-1" id="workflowFilterNav">
+                <button class="btn btn-sm btn-glass active workflow-tab-btn" data-type="all">
+                    <i class="bi bi-grid-fill me-1"></i>All Workflows
+                </button>
+                <button class="btn btn-sm btn-glass workflow-tab-btn" data-type="job">
+                    <i class="bi bi-briefcase me-1"></i>Jobs & Internships
+                </button>
+                <button class="btn btn-sm btn-glass workflow-tab-btn" data-type="hackathon">
+                    <i class="bi bi-lightning-charge me-1"></i>Hackathons
+                </button>
+                <button class="btn btn-sm btn-glass workflow-tab-btn" data-type="competition">
+                    <i class="bi bi-trophy me-1"></i>Competitions
+                </button>
+                <button class="btn btn-sm btn-glass workflow-tab-btn" data-type="certification">
+                    <i class="bi bi-award me-1"></i>Certifications & Courses
+                </button>
+            </div>
+            <div class="text-secondary small px-2 d-none d-md-block">
+                <i class="bi bi-info-circle me-1"></i><span id="workflowHintText">Showing unified recruitment pipeline</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Kanban Board Container -->
+    <div class="kanban-board-wrapper">
+        <div class="kanban-board" id="dynamicKanbanBoard">
+            <!-- Columns rendered dynamically via applications.js -->
+        </div>
+    </div>
+</div>
+
+<!-- View Application / Registration Details Modal -->
+<div class="modal fade" id="viewApplicationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl">
+            <div class="modal-header border-subtle bg-surface-elevated">
+                <div>
+                    <span class="badge badge-primary-subtle text-uppercase mb-1" id="viewModalTypeBadge">OPPORTUNITY</span>
+                    <h4 class="modal-title fw-bold text-light mb-0" id="viewModalTitle">Application Details</h4>
+                    <p class="text-secondary small mb-0" id="viewModalCompany">Company / Host</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="viewModalBody">
+                <!-- Populated dynamically via applications.js -->
+            </div>
+            <div class="modal-footer border-subtle">
+                <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-gradient-primary" id="viewModalEditBtn">
+                    <i class="bi bi-pencil me-1"></i>Edit Tracking
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Application Modal -->
+<div class="modal fade" id="addApplicationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl">
+            <div class="modal-header border-subtle">
+                <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle text-primary me-2"></i>Track Opportunity in Pipeline</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addApplicationForm">
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label">Opportunity / Position Title *</label>
+                            <input type="text" class="form-control" id="addAppTitle" placeholder="e.g. AI Hackathon 2026 or Software Intern" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Organization / Company Name *</label>
+                            <input type="text" class="form-control" id="addAppCompany" placeholder="e.g. Google, MIT, HackMIT, AWS" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label">Opportunity Type *</label>
+                            <select class="form-select" id="addAppType">
+                                <option value="job" selected>Full-Time Job</option>
+                                <option value="internship">Internship</option>
+                                <option value="hackathon">Hackathon</option>
+                                <option value="competition">Competition</option>
+                                <option value="certification">Certification</option>
+                                <option value="course">Course</option>
+                                <option value="other">Other Student Opportunity</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Initial Stage / Status *</label>
+                            <select class="form-select" id="addAppStatus">
+                                <!-- Populated dynamically by opportunity type -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-4">
+                            <label class="form-label" id="addAppDateFieldLabel">Date Applied / Registered</label>
+                            <input type="date" class="form-control" id="addAppAppliedDate">
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label">Submission / Registration Deadline</label>
+                            <input type="date" class="form-control" id="addAppDeadline">
+                        </div>
+                        <div class="col-sm-4" id="addAppInterviewDateGroup">
+                            <label class="form-label">Interview / Round Date</label>
+                            <input type="datetime-local" class="form-control" id="addAppInterviewDate">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" id="addAppSalaryLabel">Stipend / Salary / Prize Money (Optional)</label>
+                        <input type="text" class="form-control" id="addAppSalary" placeholder="e.g. $9,000/month or $25k Prize Pool">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Notes, Round Prep & Key Links</label>
+                        <textarea class="form-control" id="addAppNotes" rows="3" placeholder="Teammates, recruiter contact, problem statements, submission links..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-subtle">
+                    <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-gradient-primary">Add to Tracker</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Application Modal -->
+<div class="modal fade" id="editApplicationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl">
+            <div class="modal-header border-subtle">
+                <h5 class="modal-title fw-bold"><i class="bi bi-pencil text-primary me-2"></i>Edit Opportunity Tracking</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editApplicationForm">
+                <input type="hidden" id="editAppId">
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label">Title *</label>
+                            <input type="text" class="form-control" id="editAppTitle" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Company / Host *</label>
+                            <input type="text" class="form-control" id="editAppCompany" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" id="editAppType">
+                                <option value="job">Full-Time Job</option>
+                                <option value="internship">Internship</option>
+                                <option value="hackathon">Hackathon</option>
+                                <option value="competition">Competition</option>
+                                <option value="certification">Certification</option>
+                                <option value="course">Course</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Current Stage / Status</label>
+                            <select class="form-select" id="editAppStatus">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-4">
+                            <label class="form-label">Deadline</label>
+                            <input type="date" class="form-control" id="editAppDeadline">
+                        </div>
+                        <div class="col-sm-4" id="editAppInterviewDateGroup">
+                            <label class="form-label">Interview / Event Date</label>
+                            <input type="datetime-local" class="form-control" id="editAppInterviewDate">
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label">Stipend / Prize / Salary</label>
+                            <input type="text" class="form-control" id="editAppSalary">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Notes & Recruiter / Submission Details</label>
+                        <textarea class="form-control" id="editAppNotes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-subtle">
+                    <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-gradient-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/applications.js') }}"></script>
+{% endblock %}

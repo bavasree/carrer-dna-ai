@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Opportunity Explorer — Career DNA AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="mb-4">
+        <span class="badge badge-primary-subtle text-uppercase mb-1">SMART MATCHING</span>
+        <h3 class="fw-bold text-light mb-1">Opportunity Recommendations</h3>
+        <p class="text-secondary small mb-0">Curated internships, hackathons, certifications, competitions, courses, and jobs tailored to your skills</p>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="card bg-surface-card p-3 mb-4 border border-subtle shadow-md">
+        <!-- Type Filter Pills -->
+        <div class="d-flex flex-wrap gap-2 mb-3 pb-3 border-bottom border-subtle">
+            <button type="button" class="btn btn-sm btn-gradient-primary type-filter-pill active" data-type="all">All (18+)</button>
+            <button type="button" class="btn btn-sm btn-glass type-filter-pill" data-type="internship"><i class="bi bi-briefcase me-1"></i>Internships</button>
+            <button type="button" class="btn btn-sm btn-glass type-filter-pill" data-type="hackathon"><i class="bi bi-laptop me-1"></i>Hackathons</button>
+            <button type="button" class="btn btn-sm btn-glass type-filter-pill" data-type="certification"><i class="bi bi-patch-check me-1"></i>Certifications</button>
+            <button type="button" class="btn btn-sm btn-glass type-filter-pill" data-type="course"><i class="bi bi-book me-1"></i>Courses</button>
+            <button type="button" class="btn btn-sm btn-glass type-filter-pill" data-type="competition"><i class="bi bi-trophy me-1"></i>Competitions</button>
+            <button type="button" class="btn btn-sm btn-glass type-filter-pill" data-type="job"><i class="bi bi-building me-1"></i>Graduate Jobs</button>
+        </div>
+
+        <!-- Search Controls -->
+        <div class="row g-2 align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" id="searchQueryInput" placeholder="Search by title, company, skill (e.g. React, Python, Google)...">
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <select class="form-select" id="sortSelect">
+                    <option value="match_desc">Highest AI Match</option>
+                    <option value="deadline_asc">Deadline (Soonest)</option>
+                    <option value="newest">Newly Listed</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3 d-flex align-items-center justify-content-end">
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch" id="remoteOnlyCheckbox">
+                    <label class="form-check-label text-secondary small" for="remoteOnlyCheckbox">Remote Only</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Count -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <small class="text-secondary fw-semibold" id="oppResultCount">Loading matching opportunities...</small>
+    </div>
+
+    <!-- Opportunities Dynamic Grid -->
+    <div class="row" id="opportunitiesGrid">
+        <!-- Populated via recommendations.js -->
+    </div>
+</div>
+
+<!-- Opportunity Detail & Match Modal -->
+<div class="modal fade" id="opportunityDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl">
+            <div class="modal-header border-subtle">
+                <h5 class="modal-title fw-bold">Opportunity Analysis & Match Breakdown</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="oppModalBody">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Opportunity-Specific Real-World Registration & Application Modal -->
+<div class="modal fade" id="opportunityApplyModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl">
+            <div class="modal-header border-subtle bg-surface-elevated">
+                <div>
+                    <span class="badge badge-primary-subtle text-uppercase mb-1" id="applyModalOppTypeBadge">APPLICATION</span>
+                    <h4 class="modal-title fw-bold text-light mb-0" id="applyModalOppTitle">Register for Opportunity</h4>
+                    <p class="text-secondary small mb-0" id="applyModalOppCompany">Company / Organization</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal Body with Dynamic Form Content -->
+            <div class="modal-body p-4" id="applyModalBodyContent">
+                <!-- Injected dynamically via recommendations.js based on opportunity type -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Registration Confirmation / Success Modal -->
+<div class="modal fade" id="applicationSuccessModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl text-center p-4">
+            <div class="mb-3">
+                <div class="rounded-circle bg-success bg-opacity-20 d-inline-flex p-3 text-success mb-2" style="font-size: 2.5rem;">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <h4 class="fw-bold text-light mb-1" id="successModalTitle">Registration Confirmed!</h4>
+                <p class="text-secondary small mb-3" id="successModalSubtitle">Your application has been recorded in the database.</p>
+            </div>
+
+            <div class="p-3 bg-surface-elevated rounded-3 border border-subtle text-start mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary small">OPPORTUNITY:</span>
+                    <span class="fw-bold text-light small" id="successModalOppName">HackMIT 2026</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary small">ORGANIZATION:</span>
+                    <span class="text-light small" id="successModalCompany">MIT</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary small">CURRENT STAGE:</span>
+                    <span class="badge badge-emerald-subtle text-uppercase" id="successModalStage">Registered</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-secondary small">SUBMITTED ON:</span>
+                    <span class="text-light small" id="successModalDate">Today</span>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <a href="/applications" class="btn btn-gradient-primary">
+                    <i class="bi bi-kanban me-1"></i>Open in Application Tracker
+                </a>
+                <button type="button" class="btn btn-glass" data-bs-dismiss="modal">
+                    Explore More Opportunities
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/recommendations.js') }}"></script>
+{% endblock %}

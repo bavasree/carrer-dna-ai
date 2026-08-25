@@ -1,0 +1,83 @@
+<nav class="navbar navbar-expand-lg app-navbar">
+    <div class="container-fluid px-lg-4">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+            <img src="{{ url_for('static', filename='img/logo-icon.svg') }}" alt="Career DNA AI" width="36" height="36" class="rounded-3 shadow-sm">
+            <span class="fw-bold tracking-tight">Career<span class="text-gradient">DNA</span> <span class="badge badge-primary-subtle fs-6 align-middle">AI</span></span>
+        </a>
+
+        <button class="navbar-toggler border-0 text-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <i class="bi bi-list fs-2"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <!-- Authenticated Student Links -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3" id="navbarAuthLinks">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard"><i class="bi bi-grid-1x2 me-1"></i>Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/career-analysis"><i class="bi bi-cpu me-1"></i>AI Analysis</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/recommendations"><i class="bi bi-compass me-1"></i>Opportunities</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/roadmap"><i class="bi bi-map me-1"></i>Roadmap</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/resume-builder"><i class="bi bi-file-earmark-person me-1"></i>AI Resume</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/applications"><i class="bi bi-kanban me-1"></i>Tracker</a>
+                </li>
+            </ul>
+
+            <!-- Authenticated Admin Links (Shown when user is admin) -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 d-none" id="navbarAdminAuthLinks">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/students"><i class="bi bi-people me-1"></i>Students</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/opportunities"><i class="bi bi-briefcase me-1"></i>Opportunities</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/applications"><i class="bi bi-kanban me-1"></i>Applications / Registrations</a>
+                </li>
+            </ul>
+
+            <!-- Right: User Avatar Dropdown (Auth) or Login/Register (Guest) -->
+            <div class="d-flex align-items-center">
+                <!-- Guest Section -->
+                <div id="navbarGuestSection" class="d-flex align-items-center gap-2">
+                    <a href="/login" class="btn btn-glass btn-sm">Log In</a>
+                    <a href="/register" class="btn btn-gradient-primary btn-sm">Get Started Free</a>
+                </div>
+
+                <!-- Authenticated User Dropdown -->
+                <div id="navbarAuthSection" class="d-none dropdown">
+                    <button class="btn btn-glass btn-sm d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.8rem; font-weight: 700;" id="navbarUserAvatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <span id="navbarUserName" class="text-light fw-medium small">Student</span>
+                        <span id="navbarUserRole" class="badge bg-primary" style="font-size: 0.65rem;">STUDENT</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow border-subtle" id="navbarUserDropdownMenu">
+                        <li class="student-menu-item"><a class="dropdown-item" href="/profile"><i class="bi bi-person me-2"></i>My Profile</a></li>
+                        <li class="student-menu-item"><a class="dropdown-item" href="/onboarding"><i class="bi bi-sliders me-2"></i>Onboarding Wizard</a></li>
+                        <li class="student-menu-item"><a class="dropdown-item" href="/resume-builder"><i class="bi bi-file-earmark-pdf me-2"></i>Export Resume</a></li>
+                        <li class="admin-menu-item d-none"><a class="dropdown-item" href="/admin/dashboard"><i class="bi bi-shield-lock me-2"></i>Admin Dashboard</a></li>
+                        <li class="admin-menu-item d-none"><a class="dropdown-item" href="/admin/students"><i class="bi bi-people me-2"></i>Manage Students</a></li>
+                        <li class="admin-menu-item d-none"><a class="dropdown-item" href="/admin/opportunities"><i class="bi bi-briefcase me-2"></i>Manage Opportunities</a></li>
+                        <li class="admin-menu-item d-none"><a class="dropdown-item" href="/admin/applications"><i class="bi bi-kanban me-2"></i>Monitor Applications</a></li>
+                        <li><hr class="dropdown-divider border-subtle"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right me-2"></i>Log Out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,25 @@
+<!-- Unified Admin Navigation Bar -->
+<div class="card bg-surface-card p-2 mb-4 border border-subtle shadow-sm">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <a href="/admin/dashboard" class="btn btn-sm {% if request.path == '/admin/dashboard' or request.path == '/admin' %}btn-gradient-primary active text-white fw-bold shadow-sm{% else %}btn-glass text-light fw-medium{% endif %}">
+                <i class="bi bi-speedometer2 me-1"></i>Dashboard
+            </a>
+            <a href="/admin/students" class="btn btn-sm {% if request.path == '/admin/students' %}btn-gradient-primary active text-white fw-bold shadow-sm{% else %}btn-glass text-light fw-medium{% endif %}">
+                <i class="bi bi-people me-1"></i>Students
+            </a>
+            <a href="/admin/opportunities" class="btn btn-sm {% if request.path == '/admin/opportunities' %}btn-gradient-primary active text-white fw-bold shadow-sm{% else %}btn-glass text-light fw-medium{% endif %}">
+                <i class="bi bi-briefcase me-1"></i>Opportunities
+            </a>
+            <a href="/admin/applications" class="btn btn-sm {% if request.path == '/admin/applications' %}btn-gradient-primary active text-white fw-bold shadow-sm{% else %}btn-glass text-light fw-medium{% endif %}">
+                <i class="bi bi-kanban me-1"></i>Applications / Registrations
+            </a>
+        </div>
+        <div class="d-flex align-items-center gap-2 small px-2">
+            <span class="badge bg-primary text-white border-0 px-3 py-1.5 fw-bold shadow-sm" style="letter-spacing: 0.05em; font-size: 0.78rem;">
+                <i class="bi bi-shield-lock-fill me-1 text-white"></i>ADMIN PORTAL
+            </span>
+            <span class="d-none d-lg-inline text-light" style="font-size: 0.8rem;">&bull; Manage Students, Opportunities & Monitor Submissions</span>
+        </div>
+    </div>
+</div>

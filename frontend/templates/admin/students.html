@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Registered Students Directory — Career DNA AI Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-4">
+    <!-- Admin Navigation Bar -->
+    {% include 'partials/admin_nav.html' %}
+
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <span class="badge bg-surface-elevated text-primary border border-primary border-opacity-40 px-3 py-1.5 fw-bold text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                <i class="bi bi-people me-1 text-primary"></i>STUDENT DIRECTORY
+            </span>
+            <h3 class="fw-bold text-light mb-1">Registered Students Directory</h3>
+            <p class="text-secondary small mb-0">Search, filter, and inspect registered student profiles, skills, career goals, and applied opportunities</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/admin/opportunities" class="btn btn-glass text-light fw-medium">
+                <i class="bi bi-briefcase me-1 text-info"></i>Manage Opportunities
+            </a>
+            <a href="/admin/applications" class="btn btn-gradient-primary text-white fw-bold shadow-sm">
+                <i class="bi bi-kanban me-1"></i>Monitor Submissions
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="card bg-surface-card p-3 mb-4 border border-subtle shadow-sm">
+        <div class="row g-2 align-items-center">
+            <div class="col-lg-5 col-md-6">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-surface-elevated text-secondary border-subtle"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control text-light" id="studentSearchInput" placeholder="Search by name, email, skills, department, or goal...">
+                </div>
+            </div>
+            <div class="col-6 col-lg-3 col-md-3">
+                <select class="form-select form-select-sm" id="studentBranchFilter">
+                    <option value="all">All Departments / Branches</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Electrical">Electrical / Electronics</option>
+                    <option value="Data Science">Data Science / AI</option>
+                    <option value="Software Engineering">Software Engineering</option>
+                </select>
+            </div>
+            <div class="col-6 col-lg-2 col-md-3">
+                <select class="form-select form-select-sm" id="studentYearFilter">
+                    <option value="all">All Grad Years</option>
+                    <option value="2025">Class of 2025</option>
+                    <option value="2026">Class of 2026</option>
+                    <option value="2027">Class of 2027</option>
+                    <option value="2028">Class of 2028</option>
+                </select>
+            </div>
+            <div class="col-12 col-lg-2 d-flex justify-content-lg-end justify-content-between align-items-center gap-2">
+                <span class="badge bg-surface-elevated text-light border border-subtle py-2 px-3 fw-semibold">
+                    <b class="text-white" id="studentCountBadge">0</b> students
+                </span>
+                <button class="btn btn-sm btn-glass text-light fw-medium" id="refreshStudentsBtn"><i class="bi bi-arrow-clockwise me-1 text-primary"></i>Refresh</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registered Students Table -->
+    <div class="card bg-surface-card border border-subtle shadow-md overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
+                <thead class="bg-surface-elevated text-light small fw-bold">
+                    <tr>
+                        <th>STUDENT NAME & CONTACT</th>
+                        <th>COLLEGE & PROGRAM</th>
+                        <th>GRAD YEAR / CGPA</th>
+                        <th>VERIFIED SKILLS</th>
+                        <th>CAREER GOAL</th>
+                        <th>SUBMISSIONS</th>
+                        <th class="text-end">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="registeredStudentsTableBody">
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-secondary">
+                            <div class="spinner-border spinner-border-sm text-primary me-2"></div>Loading registered students directory...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Student Profile Modal -->
+<div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl">
+            <div class="modal-header border-subtle bg-surface-elevated">
+                <div>
+                    <span class="badge bg-surface-elevated text-primary border border-primary border-opacity-40 text-uppercase mb-1 fw-bold">STUDENT PROFILE INSPECTOR</span>
+                    <h5 class="modal-title fw-bold text-white">Full Student Career Profile</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="studentDetailsModalBody">
+                <!-- Dynamically loaded via admin.js -->
+            </div>
+            <div class="modal-footer border-subtle">
+                <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

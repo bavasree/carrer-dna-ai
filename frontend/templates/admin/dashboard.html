@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard — Career DNA AI{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-4">
+    <!-- Admin Navigation Bar -->
+    {% include 'partials/admin_nav.html' %}
+
+    <!-- Header Banner -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <span class="badge bg-surface-elevated text-primary border border-primary border-opacity-40 px-3 py-1.5 fw-bold text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                <i class="bi bi-speedometer2 me-1 text-primary"></i>PLATFORM OVERVIEW
+            </span>
+            <h3 class="fw-bold text-light mb-1">Administrator Dashboard</h3>
+            <p class="text-secondary small mb-0">Core management summary of students, catalog opportunities, and registration activity</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/admin/students" class="btn btn-glass text-light fw-medium">
+                <i class="bi bi-people me-1 text-primary"></i>Manage Students
+            </a>
+            <a href="/admin/opportunities" class="btn btn-glass text-light fw-medium">
+                <i class="bi bi-briefcase me-1 text-info"></i>Manage Opportunities
+            </a>
+            <a href="/admin/applications" class="btn btn-gradient-primary text-white fw-bold shadow-sm">
+                <i class="bi bi-kanban me-1"></i>Monitor Applications
+            </a>
+        </div>
+    </div>
+
+    <!-- 4 Essential Metrics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card bg-surface-card p-3 border border-subtle h-100 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="text-light text-uppercase fw-semibold small" style="font-size: 0.75rem; letter-spacing: 0.03em;">Registered Students</span>
+                    <div class="brand-icon bg-primary text-white border-0 shadow-sm" style="width: 32px; height: 32px;"><i class="bi bi-people"></i></div>
+                </div>
+                <div class="d-flex align-items-baseline justify-content-between mt-2">
+                    <span class="fs-3 fw-bold text-white" id="adminStatStudents">0</span>
+                    <a href="/admin/students" class="small text-primary text-decoration-none fw-bold">View &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card bg-surface-card p-3 border border-subtle h-100 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="text-light text-uppercase fw-semibold small" style="font-size: 0.75rem; letter-spacing: 0.03em;">Total Opportunities</span>
+                    <div class="brand-icon bg-info text-white border-0 shadow-sm" style="width: 32px; height: 32px;"><i class="bi bi-collection"></i></div>
+                </div>
+                <div class="d-flex align-items-baseline justify-content-between mt-2">
+                    <span class="fs-3 fw-bold text-white" id="adminStatTotalOpps">0</span>
+                    <a href="/admin/opportunities" class="small text-info text-decoration-none fw-bold">Catalog &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card bg-surface-card p-3 border border-subtle h-100 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="text-light text-uppercase fw-semibold small" style="font-size: 0.75rem; letter-spacing: 0.03em;">Active Opportunities</span>
+                    <div class="brand-icon bg-primary text-white border-0 shadow-sm" style="width: 32px; height: 32px;"><i class="bi bi-check2-circle"></i></div>
+                </div>
+                <div class="d-flex align-items-baseline justify-content-between mt-2">
+                    <span class="fs-3 fw-bold text-white" id="adminStatActiveOpps">0</span>
+                    <span class="badge bg-primary text-white border-0 py-1 px-2.5 fw-bold shadow-sm" style="font-size: 0.72rem;">Active</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="card bg-surface-card p-3 border border-subtle h-100 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="text-light text-uppercase fw-semibold small" style="font-size: 0.75rem; letter-spacing: 0.03em;">Total Applications / Regs</span>
+                    <div class="brand-icon bg-primary text-white border-0 shadow-sm" style="width: 32px; height: 32px;"><i class="bi bi-kanban"></i></div>
+                </div>
+                <div class="d-flex align-items-baseline justify-content-between mt-2">
+                    <span class="fs-3 fw-bold text-white" id="adminStatApps">0</span>
+                    <a href="/admin/applications" class="small text-primary text-decoration-none fw-bold">Monitor &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Grids -->
+    <div class="row g-4 mb-4">
+        <!-- 1. Registered Students Overview Table -->
+        <div class="col-lg-6">
+            <div class="card bg-surface-card p-4 border border-subtle shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light fw-bold mb-0">
+                        <i class="bi bi-person-lines-fill text-primary me-2"></i>Recent Students
+                    </h5>
+                    <a href="/admin/students" class="btn btn-sm btn-glass text-light fw-medium">
+                        View All Students <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
+                        <thead class="bg-surface-elevated text-light small fw-bold">
+                            <tr>
+                                <th>STUDENT</th>
+                                <th>DEGREE / BRANCH</th>
+                                <th>CAREER GOAL</th>
+                                <th class="text-end">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminRecentStudentsBody">
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-secondary">
+                                    <div class="spinner-border spinner-border-sm text-primary me-2"></div>Loading students...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Recent Applications / Registrations -->
+        <div class="col-lg-6">
+            <div class="card bg-surface-card p-4 border border-subtle shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light fw-bold mb-0">
+                        <i class="bi bi-clock-history text-primary me-2"></i>Recent Submissions
+                    </h5>
+                    <a href="/admin/applications" class="btn btn-sm btn-glass text-light fw-medium">
+                        Monitor All <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
+                        <thead class="bg-surface-elevated text-light small fw-bold">
+                            <tr>
+                                <th>STUDENT</th>
+                                <th>OPPORTUNITY</th>
+                                <th>TYPE</th>
+                                <th>STAGE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminRecentAppsBody">
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-secondary">
+                                    <div class="spinner-border spinner-border-sm text-primary me-2"></div>Loading submissions...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Student Profile Inspector Modal (Shared) -->
+<div class="modal fade" id="studentDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl">
+            <div class="modal-header border-subtle bg-surface-elevated">
+                <div>
+                    <span class="badge bg-surface-elevated text-primary border border-primary border-opacity-40 text-uppercase mb-1 fw-bold">STUDENT PROFILE</span>
+                    <h5 class="modal-title fw-bold text-white" id="modalStudentName">Student Name</h5>
+                    <p class="text-secondary small mb-0" id="modalStudentEmail">email@university.edu</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="studentModalBody">
+                <!-- Populated via JS -->
+            </div>
+            <div class="modal-footer border-subtle">
+                <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

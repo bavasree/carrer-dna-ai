@@ -1,0 +1,22 @@
+<!-- AI Processing Modal -->
+<div class="modal fade" id="aiLoadingModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl text-center p-4">
+            <div class="modal-body py-4">
+                <div class="position-relative d-inline-block mb-3">
+                    <img src="{{ url_for('static', filename='img/logo-icon.svg') }}" alt="Career DNA AI" width="68" height="68" class="ai-pulse-glow rounded-4">
+                </div>
+                <h5 class="fw-bold text-light mb-2">Google Gemini AI Working...</h5>
+                <p class="text-secondary small mb-3 max-w-sm mx-auto" id="aiLoadingMessage">
+                    AI is analyzing your profile, evaluating skill benchmarks, and generating tailored insights...
+                </p>
+                <div class="progress bg-surface-elevated mx-auto mb-3" style="height: 4px; width: 60%;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: 100%;"></div>
+                </div>
+                <button type="button" class="btn btn-sm btn-glass text-secondary" id="aiModalDismissBtn" style="display: none;" onclick="window.api.hideAILoader()">
+                    Dismiss <i class="bi bi-x-lg ms-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

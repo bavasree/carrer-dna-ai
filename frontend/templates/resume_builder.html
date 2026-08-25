@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}AI Resume Builder & PDF Preview — Career DNA AI{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-4">
+    <!-- Top Action Bar -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <span class="badge badge-rose-subtle text-uppercase mb-1" style="background: rgba(244, 63, 94, 0.15); color: #FB7185; border: 1px solid rgba(244, 63, 94, 0.3);">AI RESUME ACCELERATOR</span>
+            <h3 class="fw-bold text-light mb-1">AI Resume Builder & Live PDF Preview</h3>
+            <p class="text-secondary small mb-0">Craft ATS-optimized resumes with Gemini AI bullet enhancements & ReportLab PDF downloads</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge badge-emerald-subtle py-2 px-3 fw-bold" id="resumeAtsScoreBadge">
+                ATS Score: --/100
+            </span>
+            <button class="btn btn-glass" id="saveResumeBtn">
+                <i class="bi bi-save me-1"></i>Save Draft
+            </button>
+            <button class="btn btn-gradient-primary" id="downloadPdfBtn">
+                <i class="bi bi-file-earmark-pdf me-1"></i>Download PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Split Screen Container -->
+    <div class="resume-split-container">
+        <!-- Left Pane: Editor -->
+        <div class="resume-editor-pane">
+            <div class="card bg-surface-card p-4 mb-4 border border-subtle">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light fw-bold mb-0"><i class="bi bi-palette text-primary me-2"></i>Design Template</h5>
+                    <select class="form-select w-auto py-1 px-3 bg-surface text-light border-subtle" id="resumeTemplateSelect">
+                        <option value="modern" selected>Modern Tech (Blue Accent Header)</option>
+                        <option value="classic">Classic Corporate (ATS Traditional)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- AI ATS Scorer Card -->
+            <div class="card bg-surface-card p-4 mb-4 border border-subtle">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-light fw-bold mb-1"><i class="bi bi-stars text-warning me-2"></i>Gemini ATS Analyzer</h6>
+                        <small class="text-secondary">Scan for keyword density, formatting score, and recruiter gaps</small>
+                    </div>
+                    <button class="btn btn-sm btn-gradient-primary" id="aiScoreAtsBtn">
+                        <i class="bi bi-search me-1"></i>Score ATS
+                    </button>
+                </div>
+            </div>
+
+            <!-- Professional Summary / Career Objective -->
+            <div class="card bg-surface-card p-4 mb-4 border border-subtle">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="form-label fw-bold text-light mb-0" for="resumeCareerObjective">
+                        <i class="bi bi-card-text text-secondary me-2"></i>Professional Summary / Objective
+                    </label>
+                    <button type="button" class="btn btn-sm btn-glass text-primary" id="aiEnhanceObjBtn">
+                        <i class="bi bi-stars me-1 text-warning"></i>Enhance with Action Verbs
+                    </button>
+                </div>
+                <textarea class="form-control" id="resumeCareerObjective" rows="4" placeholder="Brief high-impact executive summary highlighting technical proficiency and achievements..."></textarea>
+            </div>
+
+            <!-- Skills Summary -->
+            <div class="card bg-surface-card p-4 mb-4 border border-subtle">
+                <label class="form-label fw-bold text-light mb-2" for="resumeSkillsSummary">
+                    <i class="bi bi-code-slash text-emerald me-2"></i>Core Skills Summary (comma separated)
+                </label>
+                <input type="text" class="form-control" id="resumeSkillsSummary" placeholder="e.g. Python, React, Docker, AWS, Git, SQL, PostgreSQL, System Design">
+            </div>
+
+            <!-- Note on Projects and Education -->
+            <div class="p-3 bg-surface-elevated rounded-3 border border-subtle text-secondary small">
+                <i class="bi bi-info-circle text-primary me-2"></i>
+                Education, verified projects, and certifications are automatically synchronized from your <a href="/profile" class="text-primary text-decoration-none">Student Profile</a>.
+            </div>
+        </div>
+
+        <!-- Right Pane: Live Paper Preview -->
+        <div class="resume-preview-pane">
+            <div id="resumePaperPreview" class="resume-paper">
+                <div class="p-5 text-center text-muted">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 small">Rendering live resume document...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ATS Feedback Modal -->
+<div class="modal fade" id="atsFeedbackModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl">
+            <div class="modal-header border-subtle">
+                <h5 class="modal-title fw-bold"><i class="bi bi-shield-check text-primary me-2"></i>ATS Scoring & Keyword Diagnostic</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="atsModalBody">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/resume_builder.js') }}"></script>
+{% endblock %}

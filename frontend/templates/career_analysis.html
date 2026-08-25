@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}AI Career Analysis & Skill Gap Visualizer — Career DNA AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <span class="badge badge-primary-subtle text-uppercase mb-1">AI DIAGNOSTICS</span>
+            <h3 class="fw-bold text-light mb-1">AI Career Analysis & Competency Gaps</h3>
+            <p class="text-secondary small mb-0">Deep intelligence powered by Google Gemini evaluating industry
+                readiness & skill saturation</p>
+        </div>
+        <button class="btn btn-gradient-primary" id="runAnalysisBtn">
+            <i class="bi bi-stars me-2"></i>Run New AI Analysis
+        </button>
+    </div>
+
+    <!-- Main Dynamic Analysis View -->
+    <div id="analysisContentArea">
+        <div class="p-5 text-center">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="text-secondary mt-2 small">Loading career analytics...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Role Deep Dive Modal -->
+<div class="modal fade" id="skillGapModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-surface text-light border border-subtle">
+            <div class="modal-header border-subtle">
+                <h5 class="modal-title fw-bold"><i class="bi bi-bullseye text-primary me-2"></i>Target Role Skill Gap
+                    Analyzer</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="roleGapForm" class="mb-3">
+                    <label class="form-label">Enter Target Role to Analyze</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="targetRoleInput"
+                            placeholder="e.g. Machine Learning Engineer, DevOps Engineer, Backend Developer" required>
+                        <button type="submit" class="btn btn-gradient-primary"><i class="bi bi-search me-1"></i>Analyze
+                            Gap</button>
+                    </div>
+                </form>
+
+                <div id="roleGapResults" class="d-none">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/career_analysis.js') }}"></script>
+{% endblock %}

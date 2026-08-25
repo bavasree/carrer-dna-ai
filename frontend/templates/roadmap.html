@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Career Roadmap — Career DNA AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <span class="badge badge-secondary-subtle text-uppercase mb-1" style="background: var(--secondary-light); color: #22D3EE; border: 1px solid rgba(6, 182, 212, 0.3);">7-STAGE CAREER PIPELINE</span>
+            <h3 class="fw-bold text-light mb-1">Personalized Career Roadmap</h3>
+            <p class="text-secondary small mb-0">Target Path: <span id="roadmapTargetRoleBadge" class="badge badge-primary-subtle text-primary">Software Engineer</span></p>
+        </div>
+        <button class="btn btn-gradient-secondary" id="generateNewRoadmapBtn">
+            <i class="bi bi-magic me-2"></i>Customize Target Role Roadmap
+        </button>
+    </div>
+
+    <!-- Progress Card -->
+    <div class="card bg-surface-card p-4 mb-4 border border-subtle shadow-md">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="text-light fw-bold mb-0"><i class="bi bi-flag text-secondary me-2"></i>Overall Path Progression</h6>
+            <span id="roadmapOverallProgressText" class="fw-bold text-gradient-secondary">0% Completed</span>
+        </div>
+        <div class="progress bg-surface-elevated" style="height: 8px;">
+            <div id="roadmapOverallProgressBar" class="progress-bar bg-gradient-secondary" style="width: 0%;"></div>
+        </div>
+    </div>
+
+    <!-- Roadmap Timeline Container -->
+    <div id="roadmapTimelineContainer">
+        <div class="p-5 text-center">
+            <div class="spinner-border text-secondary" role="status"></div>
+            <p class="text-secondary mt-2 small">Constructing personalized career stages...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/roadmap.js') }}"></script>
+{% endblock %}

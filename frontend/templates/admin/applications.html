@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Applications & Registrations Monitor — Career DNA AI Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-4">
+    <!-- Admin Navigation Bar -->
+    {% include 'partials/admin_nav.html' %}
+
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <span class="badge bg-surface-elevated text-primary border border-primary border-opacity-40 px-3 py-1.5 fw-bold text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                <i class="bi bi-kanban me-1 text-primary"></i>APPLICATIONS MONITORING
+            </span>
+            <h3 class="fw-bold text-light mb-1">Student Applications & Registrations</h3>
+            <p class="text-secondary small mb-0">Monitor and inspect all student registrations for hackathons, competitions, internships, jobs, and courses across the platform</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-glass text-light fw-medium" id="refreshAdminAppsBtn">
+                <i class="bi bi-arrow-clockwise me-1 text-primary"></i>Refresh Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="card bg-surface-card p-3 mb-4 border border-subtle shadow-sm">
+        <div class="row g-2 align-items-center">
+            <div class="col-lg-4 col-md-6">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-surface-elevated text-secondary border-subtle"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control text-light" id="adminAppSearchInput" placeholder="Search by student, email, opportunity title, or company...">
+                </div>
+            </div>
+            <div class="col-6 col-lg-3 col-md-3">
+                <select class="form-select form-select-sm" id="adminAppTypeFilter">
+                    <option value="all">All Opportunity Types</option>
+                    <option value="hackathon">Hackathons</option>
+                    <option value="internship">Internships</option>
+                    <option value="job">Full-Time Jobs</option>
+                    <option value="competition">Competitions</option>
+                    <option value="certification">Certifications</option>
+                    <option value="course">Courses</option>
+                </select>
+            </div>
+            <div class="col-6 col-lg-3 col-md-3">
+                <select class="form-select form-select-sm" id="adminAppStatusFilter">
+                    <option value="all">All Stages / Statuses</option>
+                    <option value="registered">Registered</option>
+                    <option value="applied">Applied</option>
+                    <option value="screening">Screening</option>
+                    <option value="shortlisted">Shortlisted</option>
+                    <option value="round_1">Round 1</option>
+                    <option value="round_2">Round 2</option>
+                    <option value="interview">Interview</option>
+                    <option value="finalist">Finalist</option>
+                    <option value="offer">Offer</option>
+                    <option value="winner">Winner</option>
+                    <option value="rejected">Rejected / Not Selected</option>
+                </select>
+            </div>
+            <div class="col-12 col-lg-2 d-flex justify-content-lg-end justify-content-between align-items-center gap-2">
+                <span class="badge bg-surface-elevated text-light border border-subtle py-2 px-3 fw-semibold">
+                    <b class="text-white" id="adminAppCountBadge">0</b> submissions
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="card bg-surface-card border border-subtle shadow-md overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
+                <thead class="bg-surface-elevated text-light small fw-bold">
+                    <tr>
+                        <th>STUDENT CANDIDATE</th>
+                        <th>OPPORTUNITY & COMPANY</th>
+                        <th>TYPE</th>
+                        <th>APPLIED DATE</th>
+                        <th>CURRENT STAGE</th>
+                        <th>ATTACHED RESUME</th>
+                        <th class="text-end">SUBMISSION RECORD</th>
+                    </tr>
+                </thead>
+                <tbody id="adminAllAppsTableBody">
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-secondary">
+                            <div class="spinner-border spinner-border-sm text-primary me-2"></div>Loading applications & registrations...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Submission Inspector Modal -->
+<div class="modal fade" id="adminAppDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content bg-surface text-light border border-subtle shadow-xl">
+            <div class="modal-header border-subtle bg-surface-elevated">
+                <div>
+                    <span class="badge bg-surface-elevated text-primary border border-primary border-opacity-40 text-uppercase mb-1 fw-bold" id="adminModalAppType">OPPORTUNITY</span>
+                    <h5 class="modal-title fw-bold text-white" id="adminModalAppTitle">Submission Details</h5>
+                    <p class="text-secondary small mb-0" id="adminModalAppCompany">Company • Submitted Date</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="adminModalAppBody">
+                <!-- Populated dynamically via JS -->
+            </div>
+            <div class="modal-footer border-subtle justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <label class="small text-light fw-semibold mb-0">Update Stage:</label>
+                    <select class="form-select form-select-sm" id="adminModalQuickStatus" style="width: auto;">
+                        <!-- Options dynamically populated by opportunity type -->
+                    </select>
+                    <button class="btn btn-sm btn-gradient-primary fw-semibold" id="adminModalSaveStatusBtn">
+                        <i class="bi bi-check-lg me-1"></i>Update Stage
+                    </button>
+                </div>
+                <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

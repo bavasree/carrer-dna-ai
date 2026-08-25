@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Career DNA AI — AI-Powered Student Opportunity & Career Acceleration Platform{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-5 py-lg-6 position-relative overflow-hidden">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7 text-center text-lg-start">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-surface-elevated border border-subtle mb-4">
+                    <span class="badge bg-primary" style="font-size: 0.7rem;">NEW</span>
+                    <span class="small text-light"><i class="bi bi-stars text-warning me-1"></i>Powered by Google Gemini AI</span>
+                </div>
+
+                <h1 class="display-4 fw-extrabold text-light mb-3 lh-sm">
+                    Discover Opportunities <br>
+                    Engineered for Your <span class="text-gradient">Career DNA</span>
+                </h1>
+
+                <p class="lead text-secondary mb-4 max-w-xl">
+                    Stop searching aimlessly across dozens of job boards. Career DNA AI scans your verified skills, projects, and coursework to unlock matching internships, hackathons, certifications, and high-impact jobs with customized career roadmaps.
+                </p>
+
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start mb-5">
+                    <a href="/register" class="btn btn-gradient-primary btn-lg px-4 py-3">
+                        <i class="bi bi-rocket-takeoff me-2"></i>Analyze My Career DNA Free
+                    </a>
+                    <a href="/recommendations" class="btn btn-glass btn-lg px-4 py-3">
+                        <i class="bi bi-compass me-2"></i>Explore 18+ Opportunities
+                    </a>
+                </div>
+
+                <!-- Trust Metrics -->
+                <div class="row text-center text-lg-start g-3 pt-3 border-top border-subtle">
+                    <div class="col-4">
+                        <div class="h4 fw-bold text-light mb-0">98%</div>
+                        <small class="text-muted">Matching Precision</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="h4 fw-bold text-gradient-secondary mb-0">6 Types</div>
+                        <small class="text-muted">Jobs, Interns, Hackathons</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="h4 fw-bold text-gradient-accent mb-0">100%</div>
+                        <small class="text-muted">ATS Resume Score</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Interactive Preview Card -->
+            <div class="col-lg-5">
+                <div class="card bg-surface-card p-4 shadow-xl position-relative">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="brand-icon" style="width: 32px; height: 32px;"><i class="bi bi-stars"></i></div>
+                            <span class="fw-bold text-light small">AI Opportunity Match</span>
+                        </div>
+                        <span class="badge badge-emerald-subtle py-1 px-2"><i class="bi bi-check2 me-1"></i>94% Match</span>
+                    </div>
+
+                    <div class="p-3 bg-surface-elevated rounded border border-subtle mb-3">
+                        <span class="badge badge-primary-subtle text-uppercase mb-1" style="font-size: 0.68rem;">Internship</span>
+                        <h6 class="text-light fw-bold mb-1">Software Engineering Intern</h6>
+                        <small class="text-secondary"><i class="bi bi-building me-1"></i>Google &bull; Remote / Hybrid</small>
+                        <div class="d-flex gap-1 mt-2">
+                            <span class="badge badge-emerald-subtle" style="font-size: 0.68rem;"><i class="bi bi-check-lg me-1"></i>Python</span>
+                            <span class="badge badge-emerald-subtle" style="font-size: 0.68rem;"><i class="bi bi-check-lg me-1"></i>Data Structures</span>
+                            <span class="badge badge-primary-subtle" style="font-size: 0.68rem;">Git</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-surface-elevated rounded border border-subtle mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-secondary fw-semibold">Career Readiness Index</small>
+                            <span class="text-primary fw-bold">88 / 100</span>
+                        </div>
+                        <div class="progress bg-surface" style="height: 6px;">
+                            <div class="progress-bar bg-gradient-primary" style="width: 88%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="/login" class="btn btn-sm btn-gradient-primary w-100">Try Student Demo <i class="bi bi-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 6 Core Pillars Section -->
+<section class="py-5 bg-surface position-relative">
+    <div class="container py-4">
+        <div class="text-center max-w-2xl mx-auto mb-5">
+            <span class="badge badge-primary-subtle mb-2">COMPLETE ECOSYSTEM</span>
+            <h2 class="display-6 fw-bold text-light mb-3">Engineered to Accelerate Student Success</h2>
+            <p class="text-secondary">From profile diagnosis to signing the offer letter, Career DNA AI equips you with everything needed to stand out.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Feature 1 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-surface-card p-4 h-100">
+                    <div class="brand-icon mb-3 bg-primary"><i class="bi bi-cpu"></i></div>
+                    <h5 class="text-light fw-bold mb-2">AI Career Analysis</h5>
+                    <p class="text-secondary small mb-0">Gemini analyzes your CGPA, projects, and skills to calculate your Career Readiness Score and highlight unique technical strengths.</p>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-surface-card p-4 h-100">
+                    <div class="brand-icon mb-3 bg-secondary" style="background: var(--gradient-secondary);"><i class="bi bi-bullseye"></i></div>
+                    <h5 class="text-light fw-bold mb-2">Skill-Gap Intelligence</h5>
+                    <p class="text-secondary small mb-0">Identifies exact missing competencies for your target dream role and provides actionable learning resources to bridge the gap.</p>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-surface-card p-4 h-100">
+                    <div class="brand-icon mb-3" style="background: var(--gradient-accent);"><i class="bi bi-compass"></i></div>
+                    <h5 class="text-light fw-bold mb-2">6-Category Recommendations</h5>
+                    <p class="text-secondary small mb-0">Discover curated internships, hackathons, certifications, courses, competitions, and graduate jobs with match percentages.</p>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-surface-card p-4 h-100">
+                    <div class="brand-icon mb-3 bg-primary"><i class="bi bi-map"></i></div>
+                    <h5 class="text-light fw-bold mb-2">7-Stage Career Roadmap</h5>
+                    <p class="text-secondary small mb-0">A step-by-step roadmap from skill baseline, projects to build, certifications, internship prep, to placement interview drills.</p>
+                </div>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-surface-card p-4 h-100">
+                    <div class="brand-icon mb-3" style="background: var(--gradient-danger);"><i class="bi bi-file-earmark-person"></i></div>
+                    <h5 class="text-light fw-bold mb-2">AI Resume Builder & PDF Export</h5>
+                    <p class="text-secondary small mb-0">Split-screen live editor with AI bullet rewrites, ATS scoring, and downloadable modern/classic ReportLab PDF templates.</p>
+                </div>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-surface-card p-4 h-100">
+                    <div class="brand-icon mb-3 bg-secondary" style="background: var(--gradient-secondary);"><i class="bi bi-kanban"></i></div>
+                    <h5 class="text-light fw-bold mb-2">Kanban Application Tracker</h5>
+                    <p class="text-secondary small mb-0">Organize your job search with drag-and-drop status stages (Applied, In Progress, Interview, Offer) and conversion analytics.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 position-relative">
+    <div class="container py-4 text-center">
+        <div class="card bg-surface-card p-5 border border-highlight max-w-3xl mx-auto shadow-xl">
+            <h2 class="display-6 fw-bold text-light mb-3">Ready to Unlock Your Career Potential?</h2>
+            <p class="text-secondary mb-4">Create your account in under 2 minutes and let Gemini AI build your custom roadmap today.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/register" class="btn btn-gradient-primary btn-lg px-4">Create Free Account</a>
+                <a href="/login" class="btn btn-glass btn-lg px-4">Sign In with Demo</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

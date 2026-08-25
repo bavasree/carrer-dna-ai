@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In — Career DNA AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5 col-xl-4">
+            <div class="card bg-surface-card p-4 p-sm-5 shadow-xl border border-subtle">
+                <div class="text-center mb-4">
+                    <img src="{{ url_for('static', filename='img/logo-icon.svg') }}" alt="Career DNA AI" width="56" height="56" class="mb-3 rounded-3 shadow">
+                    <h3 class="fw-bold text-light mb-1">Welcome Back</h3>
+                    <p class="text-secondary small">Access your Career DNA recommendations & roadmap</p>
+                </div>
+
+                <!-- Quick Demo Buttons -->
+                <div class="p-3 bg-surface-elevated rounded-3 border border-subtle mb-4 text-center">
+                    <small class="text-secondary fw-semibold d-block mb-2">⚡ Quick 1-Click Demo Login:</small>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-glass flex-grow-1" id="demoStudentBtn">
+                            <i class="bi bi-person me-1 text-primary"></i>Student Demo
+                        </button>
+                        <button type="button" class="btn btn-sm btn-glass flex-grow-1" id="demoAdminBtn">
+                            <i class="bi bi-shield-lock me-1 text-warning"></i>Admin Demo
+                        </button>
+                    </div>
+                </div>
+
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label" for="loginEmail">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between">
+                            <label class="form-label" for="loginPassword">Password</label>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-gradient-primary w-100 py-2 fw-semibold mb-3">
+                        Sign In <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                </form>
+
+                <div class="text-center small text-secondary">
+                    Don't have an account? <a href="/register" class="text-primary text-decoration-none fw-semibold">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}
