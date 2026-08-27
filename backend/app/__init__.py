@@ -55,6 +55,7 @@ def create_app(config_name='default'):
         try:
             from sqlalchemy import text
             with db.engine.connect() as conn:
+                # Application table columns
                 try:
                     conn.execute(text("ALTER TABLE applications ADD COLUMN submitted_details_json TEXT"))
                     conn.commit()
@@ -65,6 +66,27 @@ def create_app(config_name='default'):
                     conn.commit()
                 except Exception:
                     pass
+                
+                # Opportunity table columns
+                opp_columns = [
+                    "ALTER TABLE opportunities ADD COLUMN event_mode VARCHAR(50) DEFAULT 'Online'",
+                    "ALTER TABLE opportunities ADD COLUMN event_date VARCHAR(100) NULL",
+                    "ALTER TABLE opportunities ADD COLUMN registration_fee VARCHAR(100) DEFAULT 'Free'",
+                    "ALTER TABLE opportunities ADD COLUMN team_size VARCHAR(50) NULL",
+                    "ALTER TABLE opportunities ADD COLUMN prize_details TEXT NULL",
+                    "ALTER TABLE opportunities ADD COLUMN duration VARCHAR(100) NULL",
+                    "ALTER TABLE opportunities ADD COLUMN perks_json TEXT NULL",
+                    "ALTER TABLE opportunities ADD COLUMN schedule_json TEXT NULL",
+                    "ALTER TABLE opportunities ADD COLUMN organizer_type VARCHAR(50) DEFAULT 'Company'",
+                    "ALTER TABLE opportunities ADD COLUMN venue_address VARCHAR(255) NULL",
+                    "ALTER TABLE opportunities ADD COLUMN contact_email VARCHAR(120) NULL"
+                ]
+                for stmt in opp_columns:
+                    try:
+                        conn.execute(text(stmt))
+                        conn.commit()
+                    except Exception:
+                        pass
         except Exception:
             pass
 

@@ -37,7 +37,18 @@ class Opportunity(db.Model):
     description = db.Column(db.Text, nullable=False)
     location = db.Column(db.String(150), default='Remote')
     is_remote = db.Column(db.Boolean, default=True)
-    stipend_salary = db.Column(db.String(100), nullable=True)  # e.g., "$1500/month", "Free", "$80,000/year", "Prizes: $10,000"
+    event_mode = db.Column(db.String(50), default='Online')  # Online, Offline, Hybrid, Remote
+    event_date = db.Column(db.String(100), nullable=True)  # e.g., "Oct 18 - 20, 2026"
+    registration_fee = db.Column(db.String(100), default='Free')  # e.g., "Free", "₹250/Team", "$15"
+    team_size = db.Column(db.String(50), nullable=True)  # e.g., "2 - 4 Members", "Individual / Solo"
+    prize_details = db.Column(db.Text, nullable=True)  # e.g., "₹10,00,000 Cash Pool + PPO Opportunities"
+    duration = db.Column(db.String(100), nullable=True)  # e.g., "3 Months", "6 Months", "36 Hours", "8 Weeks"
+    perks_json = db.Column(db.Text, nullable=True)  # JSON serialized list of perks/benefits
+    schedule_json = db.Column(db.Text, nullable=True)  # JSON serialized timeline/milestones
+    organizer_type = db.Column(db.String(50), default='Company')  # College / University, Tech Company, Government, Global Community, EdTech
+    venue_address = db.Column(db.String(255), nullable=True)  # Exact campus/venue address
+    contact_email = db.Column(db.String(120), nullable=True)
+    stipend_salary = db.Column(db.String(100), nullable=True)  # e.g., "$1500/month", "Free", "₹45,000/month", "₹24 LPA"
     deadline = db.Column(db.DateTime, nullable=True)
     apply_url = db.Column(db.String(500), nullable=False)
     required_skills_json = db.Column(db.Text, nullable=True)  # JSON serialized list of skills
@@ -70,6 +81,40 @@ class Opportunity(db.Model):
         else:
             self.required_skills_json = json.dumps([])
 
+    @property
+    def perks(self):
+        if not self.perks_json:
+            return []
+        try:
+            return json.loads(self.perks_json)
+        except Exception:
+            return [p.strip() for p in self.perks_json.split(',') if p.strip()]
+
+    @perks.setter
+    def perks(self, value):
+        if isinstance(value, list):
+            self.perks_json = json.dumps(value)
+        elif isinstance(value, str):
+            self.perks_json = json.dumps([p.strip() for p in value.split(',') if p.strip()])
+        else:
+            self.perks_json = json.dumps([])
+
+    @property
+    def schedule(self):
+        if not self.schedule_json:
+            return []
+        try:
+            return json.loads(self.schedule_json)
+        except Exception:
+            return []
+
+    @schedule.setter
+    def schedule(self, value):
+        if isinstance(value, list):
+            self.schedule_json = json.dumps(value)
+        else:
+            self.schedule_json = json.dumps([])
+
     def to_dict(self, student_id=None):
         is_saved = False
         is_applied = False
@@ -94,6 +139,17 @@ class Opportunity(db.Model):
             'description': self.description,
             'location': self.location,
             'is_remote': self.is_remote,
+            'event_mode': self.event_mode or ('Remote' if self.is_remote else 'Offline'),
+            'event_date': self.event_date,
+            'registration_fee': self.registration_fee or 'Free',
+            'team_size': self.team_size,
+            'prize_details': self.prize_details,
+            'duration': self.duration,
+            'perks': self.perks,
+            'schedule': self.schedule,
+            'organizer_type': self.organizer_type or 'Company',
+            'venue_address': self.venue_address or self.location,
+            'contact_email': self.contact_email,
             'stipend_salary': self.stipend_salary,
             'deadline': self.deadline.strftime('%Y-%m-%d') if self.deadline else None,
             'apply_url': self.apply_url,

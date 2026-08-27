@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from flask import Blueprint, request
 from ..models import db, User, StudentProfile, Opportunity, OpportunityCategory, Application
@@ -5,6 +6,59 @@ from ..utils.auth_decorators import role_required
 from ..utils.response import api_response, error_response
 
 admin_bp = Blueprint('admin_bp', __name__, url_prefix='/api/admin')
+
+DEPARTMENT_ALIASES = {
+    'it': ['it', 'information technology', 'info tech', 'infotech', 'information science', 'information systems'],
+    'cse': ['cse', 'cs', 'computer science', 'computer engineering', 'computer science and engineering', 'computer science & engineering', 'comp sci'],
+    'ece': ['ece', 'electronics', 'electronics and communication', 'electronics & communication', 'ec', 'electronic communication'],
+    'eee': ['eee', 'electrical', 'electrical and electronics', 'electrical & electronics', 'ee'],
+    'mech': ['mech', 'mechanical', 'mechanical engineering'],
+    'civil': ['civil', 'civil engineering'],
+    'aids': ['aids', 'ai', 'ds', 'ai & ds', 'ai/ds', 'data science', 'artificial intelligence', 'artificial intelligence and data science', 'ai and data science', 'data science & ai'],
+    'cys': ['cys', 'cyber', 'cyber security', 'cybersecurity', 'information security'],
+    'se': ['se', 'software engineering', 'software development']
+}
+
+def match_department(filter_val, student_branch, student_degree=""):
+    """
+    Synonym-aware department matching between filter values and student branch/degree records.
+    Handles abbreviations (IT, CSE, ECE, AIDS) and full names (Information Technology, Computer Science).
+    """
+    if not filter_val or filter_val.strip().lower() == 'all':
+        return True
+    
+    f_val = filter_val.strip().lower()
+    combined = f"{student_branch or ''} {student_degree or ''}".strip().lower()
+    
+    if not combined:
+        return f_val in ['other', 'general', 'all']
+
+    # 1. Direct clean substring matches in either direction
+    if f_val in combined or combined in f_val:
+        return True
+
+    # 2. Check canonical alias groups
+    for group_key, aliases in DEPARTMENT_ALIASES.items():
+        filter_matches_group = any(
+            alias == f_val or alias in f_val or f_val in alias
+            for alias in aliases
+        )
+        if filter_matches_group:
+            for alias in aliases:
+                pattern = r'(?:\b|_)' + re.escape(alias) + r'(?:\b|_)'
+                if re.search(pattern, combined) or (len(alias) >= 3 and alias in combined):
+                    return True
+                tokens = re.split(r'[\s/,\(\)\-]+', combined)
+                if alias in tokens:
+                    return True
+
+    # 3. Fuzzy token intersection for multi-word branches
+    f_tokens = [t for t in re.split(r'[\s/,\(\)\-]+', f_val) if len(t) > 2 and t not in ['and', 'engineering', 'technology', 'department', 'branch']]
+    c_tokens = [t for t in re.split(r'[\s/,\(\)\-]+', combined) if len(t) > 2 and t not in ['and', 'engineering', 'technology', 'department', 'branch']]
+    if any(t in c_tokens for t in f_tokens):
+        return True
+
+    return False
 
 @admin_bp.route('/stats', methods=['GET'])
 @role_required('admin')
@@ -93,7 +147,7 @@ def list_registered_students():
             s_term = search.strip().lower()
             match_name = s_term in name.lower()
             match_email = s_term in email.lower()
-            match_branch = s_term in branch.lower()
+            match_branch = match_department(s_term, branch, degree) or (s_term in branch.lower())
             match_degree = s_term in degree.lower()
             match_goal = s_term in career_goal.lower()
             match_skills = any(s_term in sk.lower() for sk in skills)
@@ -101,7 +155,7 @@ def list_registered_students():
                 continue
 
         if branch_filter and branch_filter != 'all':
-            if branch_filter.lower() not in branch.lower():
+            if not match_department(branch_filter, branch, degree):
                 continue
 
         if year_filter and year_filter != 'all':
@@ -127,6 +181,11 @@ def list_registered_students():
             'skills': skills,
             'profile_completion_pct': p.profile_completion_pct if p else 0,
             'applications_count': apps_count,
+            'has_uploaded_resume': bool(p and p.resume_filename),
+            'resume_filename': p.resume_filename if p else None,
+            'resume_original_name': p.resume_original_name if p else None,
+            'resume_uploaded_at': p.resume_uploaded_at.strftime('%b %d, %Y') if (p and p.resume_uploaded_at) else None,
+            'resume_url': f"/api/resume/student/{p.id}/pdf" if p else None,
             'is_active': u.is_active,
             'created_at': u.created_at.strftime('%b %d, %Y') if u.created_at else 'Recent'
         })

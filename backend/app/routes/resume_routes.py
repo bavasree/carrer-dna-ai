@@ -1,4 +1,5 @@
-from flask import Blueprint, request, send_file
+import os
+from flask import Blueprint, request, send_file, current_app, send_from_directory
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import db, User, Resume, StudentProfile
 from ..services.gemini_service import gemini_service
@@ -177,6 +178,19 @@ def download_resume_pdf():
         if not target_profile:
             return error_response("No student profile found for resume generation.", 404)
 
+    # Check if student has an uploaded resume file and caller did not explicitly request generated template
+    force_gen = request.args.get('force_generate', 'false').lower() == 'true'
+    if not force_gen and target_profile.resume_filename:
+        upload_dir = current_app.config.get('UPLOAD_FOLDER', os.path.join(current_app.root_path, 'static', 'uploads', 'resumes'))
+        file_path = os.path.join(upload_dir, target_profile.resume_filename)
+        if os.path.exists(file_path):
+            return send_from_directory(
+                upload_dir,
+                target_profile.resume_filename,
+                download_name=target_profile.resume_original_name or target_profile.resume_filename,
+                as_attachment=False
+            )
+
     resume = _get_or_create_resume(target_profile)
     template = request.args.get('template', resume.template_name or 'modern')
 
@@ -198,6 +212,20 @@ def download_student_resume_pdf(student_id):
     if not student_profile:
         return error_response("Student profile not found.", 404)
 
+    # Check if student uploaded an actual resume file
+    force_gen = request.args.get('force_generate', 'false').lower() == 'true'
+    if not force_gen and student_profile.resume_filename:
+        upload_dir = current_app.config.get('UPLOAD_FOLDER', os.path.join(current_app.root_path, 'static', 'uploads', 'resumes'))
+        file_path = os.path.join(upload_dir, student_profile.resume_filename)
+        if os.path.exists(file_path):
+            return send_from_directory(
+                upload_dir,
+                student_profile.resume_filename,
+                download_name=student_profile.resume_original_name or student_profile.resume_filename,
+                as_attachment=False
+            )
+
+    # Fallback to dynamic ReportLab verified PDF for this student
     resume = _get_or_create_resume(student_profile)
     template = request.args.get('template', resume.template_name or 'modern')
 

@@ -107,6 +107,12 @@ class StudentProfile(db.Model):
     github_url = db.Column(db.String(255), nullable=True)
     linkedin_url = db.Column(db.String(255), nullable=True)
     portfolio_url = db.Column(db.String(255), nullable=True)
+    
+    # Attached Resume fields
+    resume_filename = db.Column(db.String(255), nullable=True)
+    resume_original_name = db.Column(db.String(255), nullable=True)
+    resume_uploaded_at = db.Column(db.DateTime, nullable=True)
+
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -154,6 +160,9 @@ class StudentProfile(db.Model):
         if self.github_url or self.linkedin_url: score += 5
         if self.certifications.count() > 0: score += 5
 
+        # Attached Resume Bonus
+        if self.resume_filename: score = min(100, score + 5)
+
         self.profile_completion_pct = min(100, score)
         return self.profile_completion_pct
 
@@ -178,6 +187,11 @@ class StudentProfile(db.Model):
             'github_url': self.github_url,
             'linkedin_url': self.linkedin_url,
             'portfolio_url': self.portfolio_url,
+            'resume_filename': self.resume_filename,
+            'resume_original_name': self.resume_original_name,
+            'resume_uploaded_at': self.resume_uploaded_at.strftime('%b %d, %Y') if self.resume_uploaded_at else None,
+            'has_uploaded_resume': bool(self.resume_filename),
+            'resume_url': f'/api/resume/student/{self.id}/pdf' if self.id else None,
             'skills': [s.to_dict() for s in self.skills.all()],
             'projects': [p.to_dict() for p in self.projects.all()],
             'certifications': [c.to_dict() for c in self.certifications.all()],

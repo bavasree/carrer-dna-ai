@@ -1,4 +1,7 @@
-from flask import Blueprint, request
+import os
+from datetime import datetime
+from flask import Blueprint, request, current_app, send_from_directory
+from werkzeug.utils import secure_filename
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import db, User, StudentProfile, StudentSkill, StudentProject, StudentCertification, Skill
 from ..utils.response import api_response, error_response
@@ -247,3 +250,114 @@ def delete_certification(cert_id):
 def get_skills_catalog():
     skills = Skill.query.all()
     return api_response(data=[s.to_dict() for s in skills], message="Skills catalog fetched.")
+
+
+ALLOWED_RESUME_EXTENSIONS = {'pdf', 'doc', 'docx'}
+
+def _is_allowed_resume_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_RESUME_EXTENSIONS
+
+
+@profile_bp.route('/resume', methods=['POST'])
+@jwt_required()
+def upload_profile_resume():
+    """Upload and attach a real student resume file to student's profile."""
+    user_id = get_jwt_identity()
+    profile = _get_student_profile(user_id)
+    if not profile:
+        return error_response("Profile not found.", 404)
+
+    file = request.files.get('resume') or request.files.get('resume_file') or request.files.get('file')
+    if not file or not file.filename:
+        return error_response("No resume file uploaded. Please select a PDF or DOCX file.", 400)
+
+    if not _is_allowed_resume_file(file.filename):
+        return error_response("Invalid file format. Only PDF, DOC, and DOCX files are allowed.", 400)
+
+    upload_dir = current_app.config.get('UPLOAD_FOLDER', os.path.join(current_app.root_path, 'static', 'uploads', 'resumes'))
+    os.makedirs(upload_dir, exist_ok=True)
+
+    orig_name = secure_filename(file.filename)
+    if not orig_name:
+        orig_name = f"resume_{profile.id}.pdf"
+    
+    timestamp = int(datetime.utcnow().timestamp())
+    unique_filename = f"resume_{profile.id}_{timestamp}_{orig_name}"
+    file_path = os.path.join(upload_dir, unique_filename)
+
+    try:
+        file.save(file_path)
+    except Exception as e:
+        return error_response(f"Failed to save resume file: {str(e)}", 500)
+
+    # Clean up old file if exists
+    if profile.resume_filename:
+        old_path = os.path.join(upload_dir, profile.resume_filename)
+        if os.path.exists(old_path) and profile.resume_filename != unique_filename:
+            try:
+                os.remove(old_path)
+            except Exception:
+                pass
+
+    profile.resume_filename = unique_filename
+    profile.resume_original_name = file.filename
+    profile.resume_uploaded_at = datetime.utcnow()
+    profile.calculate_completion_pct()
+    db.session.commit()
+
+    return api_response(
+        data=profile.to_dict(),
+        message="Resume uploaded and attached to your profile successfully!",
+        status_code=200
+    )
+
+
+@profile_bp.route('/resume', methods=['GET'])
+@jwt_required()
+def get_profile_resume():
+    """Download/view current student's attached resume."""
+    user_id = get_jwt_identity()
+    profile = _get_student_profile(user_id)
+    if not profile or not profile.resume_filename:
+        return error_response("No resume attached to profile.", 404)
+
+    upload_dir = current_app.config.get('UPLOAD_FOLDER', os.path.join(current_app.root_path, 'static', 'uploads', 'resumes'))
+    file_path = os.path.join(upload_dir, profile.resume_filename)
+
+    if not os.path.exists(file_path):
+        return error_response("Uploaded resume file not found on server.", 404)
+
+    return send_from_directory(
+        upload_dir,
+        profile.resume_filename,
+        download_name=profile.resume_original_name or profile.resume_filename,
+        as_attachment=False
+    )
+
+
+@profile_bp.route('/resume', methods=['DELETE'])
+@jwt_required()
+def delete_profile_resume():
+    """Remove attached resume from student's profile."""
+    user_id = get_jwt_identity()
+    profile = _get_student_profile(user_id)
+    if not profile:
+        return error_response("Profile not found.", 404)
+
+    if profile.resume_filename:
+        upload_dir = current_app.config.get('UPLOAD_FOLDER', os.path.join(current_app.root_path, 'static', 'uploads', 'resumes'))
+        file_path = os.path.join(upload_dir, profile.resume_filename)
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except Exception:
+                pass
+
+    profile.resume_filename = None
+    profile.resume_original_name = None
+    profile.resume_uploaded_at = None
+    profile.calculate_completion_pct()
+    db.session.commit()
+
+    return api_response(data=profile.to_dict(), message="Attached resume removed successfully.")
+

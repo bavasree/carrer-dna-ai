@@ -29,6 +29,7 @@ class User(db.Model):
             'role': self.role,
             'is_active': self.is_active,
             'has_profile': bool(self.profile),
+            'profile_id': self.profile.id if self.profile else None,
             'profile_completion_pct': self.profile.profile_completion_pct if self.profile else 0,
             'full_name': self.profile.full_name if self.profile else None,
             'created_at': self.created_at.isoformat() if self.created_at else None

@@ -22,11 +22,17 @@ def list_recommendations():
         'type': request.args.get('type'),
         'category_id': request.args.get('category_id'),
         'is_remote': request.args.get('is_remote'),
+        'mode': request.args.get('mode'),
+        'fee': request.args.get('fee'),
+        'stipend': request.args.get('stipend'),
+        'location': request.args.get('location'),
+        'skills': request.args.get('skills'),
+        'deadline_status': request.args.get('deadline_status'),
         'query': request.args.get('query'),
         'min_match': request.args.get('min_match', 0),
         'sort_by': request.args.get('sort_by', 'match_desc')
     }
-    limit = int(request.args.get('limit', 50))
+    limit = int(request.args.get('limit', 60))
 
     results = recommendation_engine.get_recommendations(profile=profile, filters=filters, limit=limit)
 

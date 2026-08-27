@@ -86,6 +86,16 @@ WORKFLOW_CONFIG = {
             {'key': 'expired', 'label': 'Dropped / Expired', 'icon': 'bi-x-circle', 'color': 'danger'}
         ]
     },
+    'workshop': {
+        'label': 'Workshop & Bootcamp',
+        'default_status': 'registered',
+        'stages': [
+            {'key': 'registered', 'label': 'RSVP Confirmed', 'icon': 'bi-ticket-perforated', 'color': 'primary'},
+            {'key': 'attending', 'label': 'Attending', 'icon': 'bi-camera-video', 'color': 'info'},
+            {'key': 'completed', 'label': 'Masterclass Certified', 'icon': 'bi-patch-check', 'color': 'success'},
+            {'key': 'cancelled', 'label': 'Cancelled / Missed', 'icon': 'bi-x-circle', 'color': 'danger'}
+        ]
+    },
     'other': {
         'label': 'Other Opportunity',
         'default_status': 'registered',
@@ -423,12 +433,22 @@ def apply_for_opportunity():
             try:
                 file.save(save_path)
                 resume_filename = unique_name
+                # Also save as student profile attached resume if not already set
+                if not profile.resume_filename:
+                    profile.resume_filename = unique_name
+                    profile.resume_original_name = file.filename
+                    profile.resume_uploaded_at = datetime.utcnow()
+                    profile.calculate_completion_pct()
+                    db.session.commit()
             except Exception as e:
                 pass
 
     if not resume_filename:
         if resume_source == 'ai_generated':
             resume_filename = 'ai_generated'
+        elif profile.resume_filename:
+            # Attach the student's actual uploaded profile resume
+            resume_filename = profile.resume_filename
         elif data.get('resume_url'):
             resume_filename = data.get('resume_url')
 
@@ -547,6 +567,17 @@ def apply_for_opportunity():
         if track: summary_notes.append(f"Track: {track}")
         if strategy: summary_notes.append(f"Pitch: {strategy[:100]}...")
 
+    elif opp_type == 'workshop':
+        att_mode = data.get('attendance_mode', 'In-Person')
+        motivation = data.get('motivation', '').strip()
+
+        submitted_details['workshop_details'] = {
+            'attendance_mode': att_mode,
+            'motivation': motivation
+        }
+        summary_notes.append(f"Format: {att_mode}")
+        if motivation: summary_notes.append(f"Q&A Note: {motivation[:100]}...")
+
     else:  # certification / course / other
         schedule = data.get('learning_schedule', 'Flexible / Self-paced')
         target_date = data.get('target_completion', '')
@@ -588,7 +619,8 @@ def apply_for_opportunity():
         'internship': f"Application submitted successfully for {opp.title} at {opp.company_name}!",
         'job': f"Job application submitted successfully for {opp.title} at {opp.company_name}!",
         'certification': f"Enrolled in {opp.title} certification successfully!",
-        'course': f"Enrolled in {opp.title} course successfully!"
+        'course': f"Enrolled in {opp.title} course successfully!",
+        'workshop': f"RSVP confirmed for {opp.title}! Your ticket has been saved."
     }
     success_msg = type_success_messages.get(opp_type, f"Application for {opp.title} submitted successfully!")
 
@@ -788,10 +820,20 @@ def view_application_resume(app_id):
         if os.path.exists(file_path):
             return send_from_directory(upload_dir, app_entry.resume_filename)
 
-    # If AI verified resume or uploaded file missing, dynamically render student resume PDF
     student_profile = app_entry.student
     if not student_profile:
         return error_response("Student profile associated with application not found.", 404)
+
+    # Check if student has uploaded a resume in their profile
+    if student_profile.resume_filename:
+        upload_dir = current_app.config.get('UPLOAD_FOLDER', os.path.join(current_app.root_path, 'static', 'uploads', 'resumes'))
+        file_path = os.path.join(upload_dir, student_profile.resume_filename)
+        if os.path.exists(file_path):
+            return send_from_directory(
+                upload_dir,
+                student_profile.resume_filename,
+                download_name=student_profile.resume_original_name or student_profile.resume_filename
+            )
 
     from ..routes.resume_routes import _get_or_create_resume
     from ..services.pdf_service import pdf_service

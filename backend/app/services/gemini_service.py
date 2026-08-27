@@ -318,53 +318,113 @@ Student Experience/Projects: {projects_str}
     # 3. AI Opportunity Recommendation & Match Scoring
     # ==========================================
     def calculate_match_score(self, profile_data, opportunity_dict):
-        """Calculates a match percentage (0-100) with detailed reasons."""
-        student_skills = [s.get('skill_name', '').lower() for s in profile_data.get('skills', [])]
-        req_skills = [s.lower() for s in opportunity_dict.get('required_skills', [])]
-        
+        """Calculates a comprehensive multi-factor match percentage (0-100) with detailed explainability & preparation tips."""
+        student_skills_raw = profile_data.get('skills', [])
+        student_skills = []
+        for s in student_skills_raw:
+            if isinstance(s, dict):
+                student_skills.append(s.get('skill_name', '').lower().strip())
+            elif isinstance(s, str):
+                student_skills.append(s.lower().strip())
+        student_skills_set = set(filter(None, student_skills))
+
+        req_skills_raw = opportunity_dict.get('required_skills', []) or []
+        req_skills = [str(s).lower().strip() for s in req_skills_raw if str(s).strip()]
         if not req_skills:
             req_skills = ['programming', 'problem solving']
 
-        overlap = set(student_skills).intersection(set(req_skills))
-        overlap_cnt = len(overlap)
+        # 1. Skill Overlap & Fuzzy Match
+        matched_skill_set = set()
+        for rs in req_skills:
+            for ss in student_skills_set:
+                if rs in ss or ss in rs or rs == ss:
+                    matched_skill_set.add(rs)
+                    break
 
-        # Baseline calculation
-        if len(req_skills) > 0:
-            skill_score = (overlap_cnt / len(req_skills)) * 60
-        else:
-            skill_score = 40
+        skill_overlap_ratio = len(matched_skill_set) / max(1, len(req_skills))
+        skill_score = min(45, int(skill_overlap_ratio * 45))
 
-        # Career Goal alignment bonus
+        # 2. Career Goal & Target Role Alignment
         goal = (profile_data.get('career_goal') or profile_data.get('target_role') or '').lower()
         title = opportunity_dict.get('title', '').lower()
+        opp_type = opportunity_dict.get('opportunity_type', '').lower()
         desc = opportunity_dict.get('description', '').lower()
 
-        alignment_score = 20
-        if any(word in title or word in desc for word in goal.split() if len(word) > 3):
-            alignment_score = 35
+        alignment_score = 15
+        goal_words = [w for w in re.split(r'\W+', goal) if len(w) > 3]
+        if any(w in title or w in desc for w in goal_words):
+            alignment_score = 30
+        elif any(w in title for w in ['software', 'engineer', 'developer', 'ai', 'data', 'cloud', 'intern']):
+            alignment_score = 22
 
-        # CGPA factor
-        cgpa = profile_data.get('cgpa') or 7.0
-        cgpa_score = 5 if cgpa >= 7.0 else 2
-
-        total_match = min(98, max(25, int(skill_score + alignment_score + cgpa_score)))
+        # 3. Academic & Eligibility Fit
+        degree = str(profile_data.get('degree') or 'B.Tech').lower()
+        branch = str(profile_data.get('branch') or 'Computer Science').lower()
+        grad_year = profile_data.get('graduation_year') or 2026
+        cgpa = float(profile_data.get('cgpa') or 7.5)
         
-        matched_skill_names = [s.title() for s in overlap]
-        missing_skill_names = [s.title() for s in set(req_skills) - set(student_skills)]
+        eligibility_score = 15
+        if cgpa >= 8.0:
+            eligibility_score += 5
+        elif cgpa < 6.5:
+            eligibility_score -= 3
 
+        # 4. Experience & Projects Fit
+        projects = profile_data.get('projects', [])
+        certs = profile_data.get('certifications', [])
+        exp_score = min(10, (len(projects) * 3) + (len(certs) * 2))
+
+        # Total Match Calculation
+        total_match = min(98, max(30, skill_score + alignment_score + eligibility_score + exp_score))
+
+        matched_skill_names = [s.title() for s in matched_skill_set]
+        missing_skill_names = [s.title() for s in (set(req_skills) - matched_skill_set)]
+
+        # Detailed explainability reasons
         reasons = []
         if matched_skill_names:
-            reasons.append(f"Matches your verified skills in {', '.join(matched_skill_names[:3])}.")
-        if total_match >= 75:
-            reasons.append(f"Direct alignment with your career goal '{profile_data.get('target_role') or 'Software Engineering'}'.")
+            reasons.append(f"Strong overlap with your verified skills in {', '.join(matched_skill_names[:4])}.")
         else:
-            reasons.append(f"Great stretch opportunity to learn {', '.join(missing_skill_names[:2]) if missing_skill_names else 'industry practices'}.")
+            reasons.append("Covers fundamental concepts aligned with your technical degree.")
+
+        if alignment_score >= 25:
+            target_title = profile_data.get('target_role') or profile_data.get('career_goal') or 'Software Engineering'
+            reasons.append(f"High strategic alignment with your career aspiration of becoming a {target_title}.")
+
+        if cgpa >= 7.5:
+            reasons.append(f"Your academic standing ({cgpa} CGPA) satisfies the target eligibility profile.")
+
+        mode_str = opportunity_dict.get('event_mode') or ('Remote' if opportunity_dict.get('is_remote') else 'Offline')
+        if 'remote' in mode_str.lower() or 'online' in mode_str.lower():
+            reasons.append("Flexible virtual / online format allows seamless balance with your college curriculum.")
+
+        # Tailored Preparation Tips
+        prep_tips = []
+        if missing_skill_names:
+            prep_tips.append(f"Bridge high-priority skills: Study {missing_skill_names[0]} core patterns and complete a mini-demo project.")
+        if opp_type == 'hackathon':
+            prep_tips.append(f"Form a cross-functional team (Frontend + Backend + AI) and formulate a clear 2-minute elevator pitch for '{opportunity_dict.get('title')}'.")
+        elif opp_type in ['internship', 'job']:
+            prep_tips.append(f"Tailor your AI Resume to highlight projects demonstrating {', '.join((matched_skill_names + req_skills)[:3])}.")
+        elif opp_type == 'certification':
+            prep_tips.append("Review official practice exam questions and schedule 5-8 focused study hours per week.")
+        elif opp_type == 'competition':
+            prep_tips.append("Practice time-complexity optimization on graph algorithms and dynamic programming.")
+        else:
+            prep_tips.append("Take structured notes and build a hands-on GitHub repository to document your learnings.")
 
         return {
             "match_score": total_match,
             "matched_skills": matched_skill_names,
             "missing_skills": missing_skill_names,
-            "reasons": reasons
+            "reasons": reasons,
+            "preparation_tips": prep_tips,
+            "dna_breakdown": {
+                "skill_match": min(100, int((skill_score / 45) * 100)),
+                "goal_alignment": min(100, int((alignment_score / 30) * 100)),
+                "eligibility_fit": min(100, int((eligibility_score / 20) * 100)),
+                "experience_fit": min(100, int((exp_score / 10) * 100))
+            }
         }
 
     # ==========================================
@@ -383,8 +443,8 @@ Student Experience/Projects: {projects_str}
         7. Placement Preparation
         """
         prompt = f"""
-Generate a structured, 7-stage personalized career roadmap for a student aiming to become a "{target_role}".
-The stages MUST be EXACTLY:
+Generate a structured, 7-stage personalized career roadmap for a university student aiming to become a "{target_role}".
+The 7 stages MUST be EXACTLY:
 1. Current Skill Assessment
 2. Skills to Learn
 3. Projects to Build
@@ -393,13 +453,23 @@ The stages MUST be EXACTLY:
 6. Interview Preparation
 7. Placement Preparation
 
+For every skill and milestone in the roadmap, recommend real, trusted, top-tier learning resources with valid URLs (e.g., Python Official Docs, MDN Web Docs, LeetCode, W3Schools, GitHub, AWS Skill Builder, PostgreSQL Docs, Docker Docs).
+
 Return a JSON array of exactly 7 objects. Each object must have:
 - "stage_number": integer (1 to 7)
 - "stage_name": string (the exact stage name from the list above)
-- "title": string (engaging milestone title)
+- "title": string (engaging, actionable milestone title)
 - "description": string (clear summary of goals for this stage)
 - "action_items": list of 2-4 objects [{{"id": "s1_1", "text": "Action item description", "completed": false}}]
-- "resources": list of 2-3 objects [{{"title": "Resource title", "url": "https://...", "type": "article|course|repo|doc"}}]
+- "resources": list of 2-4 objects [
+    {{
+        "title": "Platform or Resource Name (e.g., MDN Web Docs — JavaScript)",
+        "url": "https://...",
+        "description": "Short 1-sentence description of what to learn here",
+        "type": "doc|course|practice|tool|repo",
+        "action_label": "Learn Now"
+    }}
+]
 
 Student Profile:
 - Target Role: {target_role}
@@ -407,11 +477,12 @@ Student Profile:
 - Degree: {profile_data.get('degree', 'B.Tech')} in {profile_data.get('branch', 'Computer Science')}
 - College: {profile_data.get('college_name', 'University')}
 - CGPA: {profile_data.get('cgpa', '8.0')}
+
+Respond ONLY with valid JSON.
 """
         raw_res = self._call_gemini_raw(prompt)
         parsed = self._clean_and_parse_json(raw_res, None)
         if parsed and isinstance(parsed, list) and len(parsed) >= 6:
-            # Ensure stage names and numbers are canonical
             stage_names = [
                 "Current Skill Assessment",
                 "Skills to Learn",
@@ -424,120 +495,216 @@ Student Profile:
             for i, stg in enumerate(parsed[:7]):
                 stg['stage_number'] = i + 1
                 stg['stage_name'] = stage_names[i]
+                for r in stg.get('resources', []):
+                    if not r.get('action_label'):
+                        r['action_label'] = 'Visit Resource'
             return parsed[:7]
 
-        # Fallback 7-Stage Roadmap
+        # Fallback 7-Stage Roadmap tailored to role
         return self._fallback_roadmap(profile_data, target_role)
 
     def _fallback_roadmap(self, profile_data, target_role):
-        role = target_role or "Software Engineer"
+        role = (target_role or "Full-Stack Software Engineer").strip()
+        role_lower = role.lower()
         user_skills = [s.get('skill_name') for s in profile_data.get('skills', []) if s.get('skill_name')]
         skills_str = ", ".join(user_skills[:3]) if user_skills else "Python/JavaScript"
+
+        # Determine Role-Specific Learning Resources & Skills
+        if any(k in role_lower for k in ['ai', 'machine learning', 'data science', 'data analyst']):
+            stage2_title = "Data Science, Deep Learning & Python AI Libraries"
+            stage2_desc = "Master Python data science stack (NumPy, Pandas), machine learning algorithms (Scikit-Learn), and modern neural networks (PyTorch/TensorFlow)."
+            stage2_actions = [
+                {"id": "s2_1", "text": "Master Python data analysis libraries: Pandas, NumPy, and Matplotlib.", "completed": False},
+                {"id": "s2_2", "text": "Learn foundational machine learning: Regression, Classification, Clustering, and Evaluation metrics.", "completed": False},
+                {"id": "s2_3", "text": "Implement deep learning models (CNNs/Transformers) using PyTorch.", "completed": False}
+            ]
+            stage2_resources = [
+                {"title": "Python Official Documentation", "url": "https://docs.python.org/3/tutorial/", "description": "Master core Python syntax, OOP, and data structures.", "type": "doc", "action_label": "Learn Now"},
+                {"title": "Kaggle Learn Data Science & ML", "url": "https://www.kaggle.com/learn", "description": "Hands-on interactive courses in Python, Pandas, Machine Learning, and SQL.", "type": "practice", "action_label": "Start Learning"},
+                {"title": "PyTorch Official Tutorials", "url": "https://pytorch.org/tutorials/", "description": "Deep learning models, tensors, and neural network training pipelines.", "type": "doc", "action_label": "Visit Resource"},
+                {"title": "Scikit-Learn Machine Learning Guide", "url": "https://scikit-learn.org/stable/user_guide.html", "description": "Algorithms, data preprocessing, and model evaluation.", "type": "doc", "action_label": "Learn Now"}
+            ]
+            stage3_title = "Flagship AI / ML Capstone & Live Pipeline Deployment"
+            stage3_desc = "Train, validate, and deploy an end-to-end ML model API with Streamlit/FastAPI and cloud hosting."
+            stage3_resources = [
+                {"title": "FastAPI ML Model Serving Tutorial", "url": "https://fastapi.tiangolo.com/tutorial/", "description": "Build high-performance REST APIs for ML model inferences.", "type": "doc", "action_label": "Visit Resource"},
+                {"title": "Hugging Face Models & Transformers", "url": "https://huggingface.co/docs", "description": "Integrate open-source LLMs, embeddings, and NLP pipelines.", "type": "repo", "action_label": "Explore Platform"},
+                {"title": "GitHub Skills & Actions CI/CD", "url": "https://skills.github.com", "description": "Automated data workflows, model evaluation testing, and version control.", "type": "tool", "action_label": "Learn Now"}
+            ]
+            stage4_resources = [
+                {"title": "AWS Certified Machine Learning - Specialty", "url": "https://aws.amazon.com/certification/certified-machine-learning-specialty/", "description": "Industry benchmark for cloud ML architectures.", "type": "course", "action_label": "Explore Certification"},
+                {"title": "Google Cloud Professional Data Engineer", "url": "https://cloud.google.com/learn/certification/data-engineer", "description": "Data processing and ML deployment credential.", "type": "course", "action_label": "Visit Resource"}
+            ]
+        elif any(k in role_lower for k in ['cloud', 'devops', 'infrastructure', 'sre']):
+            stage2_title = "Cloud Infrastructure, Containerization & CI/CD Pipelines"
+            stage2_desc = "Master Linux system administration, Docker containers, Kubernetes cluster orchestration, and automated pipelines."
+            stage2_actions = [
+                {"id": "s2_1", "text": "Master Linux CLI commands, Bash scripting, and networking fundamentals.", "completed": False},
+                {"id": "s2_2", "text": "Containerize microservices with Docker and multi-stage Dockerfiles.", "completed": False},
+                {"id": "s2_3", "text": "Learn Infrastructure as Code (IaC) using Terraform.", "completed": False}
+            ]
+            stage2_resources = [
+                {"title": "Linux Journey — System Administration", "url": "https://linuxjourney.com", "description": "Learn Linux commands, networking, permissions, and process management.", "type": "course", "action_label": "Learn Now"},
+                {"title": "Docker Official Documentation", "url": "https://docs.docker.com/get-started/", "description": "Build container images, compose files, and containerized architectures.", "type": "doc", "action_label": "Visit Resource"},
+                {"title": "Kubernetes Official Tutorials", "url": "https://kubernetes.io/docs/tutorials/", "description": "Deploy, scale, and manage containerized clusters.", "type": "doc", "action_label": "Learn Now"},
+                {"title": "HashiCorp Terraform Tutorials", "url": "https://developer.hashicorp.com/terraform/tutorials", "description": "Provision reproducible cloud infrastructure via code.", "type": "doc", "action_label": "Start Learning"}
+            ]
+            stage3_title = "Automated Cloud CI/CD & Multi-Region Kubernetes Project"
+            stage3_desc = "Engineer an automated GitOps deployment pipeline deploying high-availability services to AWS/GCP."
+            stage3_resources = [
+                {"title": "GitHub Actions Official Guide", "url": "https://docs.github.com/en/actions", "description": "Automate build, test, linting, and cloud deployments on git push.", "type": "doc", "action_label": "Learn Now"},
+                {"title": "AWS Skill Builder Free DevOps Track", "url": "https://explore.skillbuilder.aws", "description": "Official AWS training for EC2, S3, IAM, ECS, and CloudWatch.", "type": "course", "action_label": "Visit Resource"}
+            ]
+            stage4_resources = [
+                {"title": "AWS Certified Solutions Architect Associate", "url": "https://aws.amazon.com/certification/certified-solutions-architect-associate/", "description": "Premier global cloud credential for systems design.", "type": "course", "action_label": "Explore Exam"},
+                {"title": "CKA: Certified Kubernetes Administrator", "url": "https://www.cncf.io/certification/cka/", "description": "Hands-on performance-based Kubernetes certification.", "type": "course", "action_label": "Learn Now"}
+            ]
+        elif any(k in role_lower for k in ['cyber', 'security']):
+            stage2_title = "Network Security, Cryptography & Threat Analysis"
+            stage2_desc = "Master web application security (OWASP Top 10), penetration testing fundamentals, and secure coding practices."
+            stage2_actions = [
+                {"id": "s2_1", "text": "Master TCP/IP networking, subnetting, and packet analysis via Wireshark.", "completed": False},
+                {"id": "s2_2", "text": "Learn OWASP Top 10 vulnerabilities (SQLi, XSS, CSRF, IDOR) and remediation.", "completed": False},
+                {"id": "s2_3", "text": "Understand cryptographic algorithms, SSL/TLS certificates, and hashing mechanisms.", "completed": False}
+            ]
+            stage2_resources = [
+                {"title": "OWASP Top 10 Web Security", "url": "https://owasp.org/www-project-top-ten/", "description": "Gold standard web vulnerability classification and defense guide.", "type": "doc", "action_label": "Learn Now"},
+                {"title": "TryHackMe — Cybersecurity Training", "url": "https://tryhackme.com", "description": "Hands-on guided cybersecurity labs from beginner to advanced.", "type": "practice", "action_label": "Start Practice"},
+                {"title": "OverTheWire Security Wargames", "url": "https://overthewire.org/wargames/", "description": "Interactive CLI security games to master Linux security concepts.", "type": "practice", "action_label": "Play Labs"}
+            ]
+            stage3_title = "Vulnerability Assessment & Automated Security Scanner Capstone"
+            stage3_desc = "Build a automated security audit tool and conduct penetration tests in safe virtual labs."
+            stage3_resources = [
+                {"title": "PortSwigger Web Security Academy", "url": "https://portswigger.net/web-security", "description": "Free online web security training from the creators of Burp Suite.", "type": "practice", "action_label": "Learn Now"},
+                {"title": "Wireshark Official User Guide", "url": "https://www.wireshark.org/docs/", "description": "Deep-dive network packet sniffing and traffic analysis.", "type": "doc", "action_label": "Visit Resource"}
+            ]
+            stage4_resources = [
+                {"title": "CompTIA Security+ Certification", "url": "https://www.comptia.org/certifications/security", "description": "Entry-level benchmark credential for IT security roles.", "type": "course", "action_label": "Explore Exam"},
+                {"title": "Certified Ethical Hacker (CEH)", "url": "https://www.eccouncil.org/train-certify/certified-ethical-hacker-ceh/", "description": "Recognized ethical hacking and penetration testing certification.", "type": "course", "action_label": "Visit Resource"}
+            ]
+        else:
+            # Default Full-Stack / Software Engineering Track
+            stage2_title = "Modern Full-Stack Engineering, Frameworks & Database Mastery"
+            stage2_desc = "Master modern responsive frontend (React / HTML / CSS / JavaScript), production backend architectures (Python / Node.js / APIs), and SQL databases."
+            stage2_actions = [
+                {"id": "s2_1", "text": "Master JavaScript (ES6+), modern DOM manipulation, and asynchronous programming (Promises / async-await).", "completed": False},
+                {"id": "s2_2", "text": "Build modular Single Page Applications with React and modern state management.", "completed": False},
+                {"id": "s2_3", "text": "Design scalable RESTful APIs with Python (FastAPI/Flask) or Node.js.", "completed": False},
+                {"id": "s2_4", "text": "Master SQL query optimization, indexes, and migrations with PostgreSQL / MySQL.", "completed": False}
+            ]
+            stage2_resources = [
+                {"title": "MDN Web Docs — HTML, CSS & JavaScript", "url": "https://developer.mozilla.org/", "description": "The authoritative industry reference for HTML, CSS, and modern JavaScript syntax.", "type": "doc", "action_label": "Learn Now"},
+                {"title": "Python Official Documentation", "url": "https://www.python.org/", "description": "Core Python language tutorial, data structures, and standard library.", "type": "doc", "action_label": "Learn Now"},
+                {"title": "W3Schools SQL & Database Tutorial", "url": "https://www.w3schools.com/sql/", "description": "Relational schema design, queries, indexes, joins, and database operations.", "type": "doc", "action_label": "Learn Now"},
+                {"title": "React Official Documentation", "url": "https://react.dev/learn", "description": "Interactive documentation for React components, hooks, and best practices.", "type": "doc", "action_label": "Learn Now"}
+            ]
+            stage3_title = "Flagship Full-Stack Capstone & Cloud Deployment"
+            stage3_desc = "Engineer an end-to-end production web platform featuring authentication, real-time updates, Docker containerization, and automated CI/CD."
+            stage3_resources = [
+                {"title": "Docker Official Getting Started Guide", "url": "https://docs.docker.com/get-started/", "description": "Containerize full-stack services and write clean Docker compose configs.", "type": "doc", "action_label": "Visit Resource"},
+                {"title": "GitHub Skills — Git & Workflows", "url": "https://skills.github.com/", "description": "Interactive GitHub tutorials for branching, pull requests, and automated actions.", "type": "tool", "action_label": "Learn Now"},
+                {"title": "Codecrafters — Build Your Own Systems", "url": "https://github.com/codecrafters-io/build-your-own-x", "description": "Recreate complex systems (databases, Git, HTTP servers) from scratch.", "type": "repo", "action_label": "Visit Resource"}
+            ]
+            stage4_resources = [
+                {"title": "AWS Cloud Training & Certification", "url": "https://aws.amazon.com/training/", "description": "Official AWS training covering compute, storage, databases, and architectures.", "type": "course", "action_label": "Visit Resource"},
+                {"title": "Meta Full-Stack Professional Certificate", "url": "https://www.coursera.org/professional-certificates/meta-front-end-developer", "description": "Accredited career certificate validating full-stack engineering competency.", "type": "course", "action_label": "Visit Resource"}
+            ]
 
         stages = [
             {
                 "stage_number": 1,
                 "stage_name": "Current Skill Assessment",
                 "title": f"Baseline Technical Audit & Gap Analysis for {role}",
-                "description": f"Benchmark current proficiency in core programming fundamentals, data structures, and prerequisites for {role}.",
+                "description": f"Benchmark your foundational programming competencies, data structures, and problem-solving readiness against modern {role} job requirements.",
                 "action_items": [
-                    {"id": "s1_1", "text": f"Complete a timed baseline assessment on DSA ({skills_str}) and problem solving.", "completed": True},
+                    {"id": "s1_1", "text": f"Complete a timed baseline assessment on core DSA ({skills_str}) and problem solving.", "completed": True},
                     {"id": "s1_2", "text": "Audit existing GitHub repositories for clean READMEs, documentation, and commit hygiene.", "completed": False},
                     {"id": "s1_3", "text": f"Document current skill gaps against Tier-1 {role} job descriptions.", "completed": False}
                 ],
                 "resources": [
-                    {"title": "Roadmap.sh Developer Guides", "url": "https://roadmap.sh", "type": "doc"},
-                    {"title": "LeetCode 150 Problems", "url": "https://leetcode.com/studyplan/top-interview-150/", "type": "course"}
+                    {"title": "LeetCode Problem Solving & Study Plan", "url": "https://leetcode.com/", "description": "Essential coding questions categorized by core data structure and algorithm patterns.", "type": "practice", "action_label": "Start Practice"},
+                    {"title": "Roadmap.sh Interactive Developer Guides", "url": "https://roadmap.sh", "description": "Community-driven visual roadmaps and skill checklists for all tech domains.", "type": "doc", "action_label": "Visit Resource"},
+                    {"title": "HackerRank Algorithms & Problem Solving", "url": "https://www.hackerrank.com/domains/algorithms", "description": "Practice algorithms and data structures with automatic test runner.", "type": "practice", "action_label": "Learn Now"}
                 ]
             },
             {
                 "stage_number": 2,
                 "stage_name": "Skills to Learn",
-                "title": "Core Technical Competency & Modern Framework Expansion",
-                "description": "Acquire production-grade frameworks, modern tooling, and backend/frontend architecture essentials.",
-                "action_items": [
-                    {"id": "s2_1", "text": f"Master modern language idioms and asynchronous architectures for {role}.", "completed": False},
-                    {"id": "s2_2", "text": "Learn relational database indexing, query optimization, and transactions.", "completed": False},
-                    {"id": "s2_3", "text": "Understand RESTful API design, JWT authentication, and rate limiting patterns.", "completed": False}
-                ],
-                "resources": [
-                    {"title": "Full Stack Open", "url": "https://fullstackopen.com", "type": "course"},
-                    {"title": "PostgreSQL Official Tutorial", "url": "https://www.postgresql.org/docs", "type": "doc"}
-                ]
+                "title": stage2_title,
+                "description": stage2_desc,
+                "action_items": stage2_actions,
+                "resources": stage2_resources
             },
             {
                 "stage_number": 3,
                 "stage_name": "Projects to Build",
-                "title": "Flagship Portfolio Capstone Development",
-                "description": "Engineer full-lifecycle, production-ready applications that demonstrate real engineering depth.",
+                "title": stage3_title,
+                "description": stage3_desc,
                 "action_items": [
-                    {"id": "s3_1", "text": f"Build a flagship full-stack {role} showcase application with real-time features and database caching.", "completed": False},
+                    {"id": "s3_1", "text": f"Build a flagship {role} capstone application featuring real-time data and database caching.", "completed": False},
                     {"id": "s3_2", "text": "Implement comprehensive unit and integration tests with >80% test coverage.", "completed": False},
-                    {"id": "s3_3", "text": "Deploy to cloud (AWS/GCP/Vercel/Render) with Docker containerization and GitHub Actions CI/CD.", "completed": False}
+                    {"id": "s3_3", "text": "Deploy to cloud (AWS / Vercel / Render) with Docker containerization and automated CI/CD.", "completed": False}
                 ],
-                "resources": [
-                    {"title": "Build Your Own X Repository", "url": "https://github.com/codecrafters-io/build-your-own-x", "type": "repo"},
-                    {"title": "Docker Official Getting Started", "url": "https://docs.docker.com/get-started/", "type": "doc"}
-                ]
+                "resources": stage3_resources
             },
             {
                 "stage_number": 4,
                 "stage_name": "Certifications to Earn",
                 "title": "Industry-Recognized Credential Validation",
-                "description": "Validate technical abilities with globally accredited cloud and developer certifications.",
+                "description": "Validate your skills and enhance your resume visibility with accredited cloud and vendor certifications.",
                 "action_items": [
-                    {"id": "s4_1", "text": "Enroll in and complete AWS Certified Cloud Practitioner / Solutions Architect Associate.", "completed": False},
-                    {"id": "s4_2", "text": "Publish credential badges on LinkedIn and include verification links in your resume.", "completed": False}
+                    {"id": "s4_1", "text": "Enroll in and complete a relevant cloud/developer certification.", "completed": False},
+                    {"id": "s4_2", "text": "Publish credential badges on LinkedIn and attach verified certificate IDs to your resume.", "completed": False}
                 ],
-                "resources": [
-                    {"title": "AWS Skill Builder", "url": "https://explore.skillbuilder.aws", "type": "course"},
-                    {"title": "Coursera Professional Certificates", "url": "https://www.coursera.org", "type": "course"}
-                ]
+                "resources": stage4_resources
             },
             {
                 "stage_number": 5,
                 "stage_name": "Internship Preparation",
-                "title": "Application Strategy & Sourcing",
-                "description": "Target high-growth startups and tech leaders with customized resumes and outreach.",
+                "title": "Application Strategy & Targeted Outreach",
+                "description": "Target high-growth startups and tech leaders with customized resumes, portfolio links, and warm referrals.",
                 "action_items": [
-                    {"id": "s5_1", "text": "Tailor resume bullets using action verbs and quantified impact metrics via Career DNA AI Builder.", "completed": False},
+                    {"id": "s5_1", "text": "Tailor resume bullets using action verbs and quantified metrics via Career DNA AI Builder.", "completed": False},
                     {"id": "s5_2", "text": "Set up alerts and apply to 15+ target opportunities via Career DNA AI tracker.", "completed": False},
                     {"id": "s5_3", "text": "Connect with 10 alumni and industry engineers on LinkedIn for warm referrals.", "completed": False}
                 ],
                 "resources": [
-                    {"title": "Cold Email Guide for Tech Internships", "url": "https://cultivatedculture.com", "type": "article"},
-                    {"title": "LinkedIn Outreach Templates", "url": "https://linkedin.com", "type": "doc"}
+                    {"title": "LinkedIn Student Career & Networking Guide", "url": "https://www.linkedin.com/help/linkedin/answer/a548441", "description": "Master LinkedIn profile optimization, connection requests, and recruiter outreach.", "type": "doc", "action_label": "Learn Now"},
+                    {"title": "GitHub Student Developer Pack", "url": "https://education.github.com/pack", "description": "Free cloud hosting, domains, and developer tools for enrolled students.", "type": "tool", "action_label": "Claim Free Pack"}
                 ]
             },
             {
                 "stage_number": 6,
                 "stage_name": "Interview Preparation",
-                "title": "Technical & Behavioral Drills",
-                "description": "Master live coding, system design fundamentals, and the STAR method for behavioral rounds.",
+                "title": "Technical Coding & Behavioral STAR Drills",
+                "description": "Master live coding patterns, system design fundamentals, and structured STAR responses for behavioral rounds.",
                 "action_items": [
                     {"id": "s6_1", "text": "Solve 75+ medium LeetCode problems (Array, Tree, Graph, DP, Two Pointers).", "completed": False},
-                    {"id": "s6_2", "text": "Conduct 3 peer mock interviews on Pramp / Interviewing.io.", "completed": False},
+                    {"id": "s6_2", "text": "Conduct 3 peer mock technical interviews on Pramp / Interviewing.io.", "completed": False},
                     {"id": "s6_3", "text": "Draft STAR method responses for top 10 behavioral questions (leadership, conflict, failure).", "completed": False}
                 ],
                 "resources": [
-                    {"title": "Tech Interview Handbook", "url": "https://www.techinterviewhandbook.org", "type": "doc"},
-                    {"title": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer", "type": "repo"}
+                    {"title": "Tech Interview Handbook", "url": "https://www.techinterviewhandbook.org", "description": "Curated interview preparation guide covering behavioral, resume, and coding rounds.", "type": "doc", "action_label": "Visit Guide"},
+                    {"title": "System Design Primer by Donne Martin", "url": "https://github.com/donnemartin/system-design-primer", "description": "Learn how to design large-scale, fault-tolerant distributed systems.", "type": "repo", "action_label": "Study Primer"},
+                    {"title": "NeetCode 150 Coding Practice", "url": "https://neetcode.io/practice", "description": "Video solutions and code walkthroughs for all top interview patterns.", "type": "practice", "action_label": "Start Practice"}
                 ]
             },
             {
                 "stage_number": 7,
                 "stage_name": "Placement Preparation",
-                "title": "Offer Negotiation & Onboarding Success",
-                "description": "Navigate final round on-site interviews, evaluate compensation packages, and prepare for day 1.",
+                "title": "Offer Evaluation, Compensation & Day-1 Success",
+                "description": "Evaluate full-time compensation structures, negotiate offers professionally, and master git branching for team onboarding.",
                 "action_items": [
                     {"id": "s7_1", "text": "Review offer letters, stipend structures, and benefits packages.", "completed": False},
                     {"id": "s7_2", "text": "Learn team codebase navigation and Git branching workflows for day 1 readiness.", "completed": False}
                 ],
                 "resources": [
-                    {"title": "Levels.fyi Negotiation Guide", "url": "https://www.levels.fyi", "type": "article"}
+                    {"title": "Levels.fyi Tech Compensation & Salary Guide", "url": "https://www.levels.fyi", "description": "Research verified software engineer salaries, levels, and negotiation benchmarks.", "type": "tool", "action_label": "Explore Salaries"},
+                    {"title": "Interviewing.io Technical Mock Rounds", "url": "https://interviewing.io", "description": "Practice realistic technical rounds with senior FAANG hiring managers.", "type": "practice", "action_label": "Visit Platform"}
                 ]
             }
         ]
+        return stages
         return stages
 
     # ==========================================
