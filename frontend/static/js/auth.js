@@ -59,7 +59,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. Registration Form Handler
+    // 2. Registration Role Toggle (Student vs Admin)
+    const careerGoalGroup = document.getElementById('careerGoalGroup');
+    const roleRadios = document.querySelectorAll('input[name="regRole"]');
+    const btnRegisterSubmit = document.getElementById('btnRegisterSubmit');
+
+    if (roleRadios.length > 0) {
+        roleRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.checked) {
+                    if (radio.value === 'admin') {
+                        if (careerGoalGroup) careerGoalGroup.style.display = 'none';
+                        if (btnRegisterSubmit) {
+                            btnRegisterSubmit.innerHTML = 'Create Admin Account <i class="bi bi-shield-lock ms-1"></i>';
+                        }
+                    } else {
+                        if (careerGoalGroup) careerGoalGroup.style.display = 'block';
+                        if (btnRegisterSubmit) {
+                            btnRegisterSubmit.innerHTML = 'Create Account & Begin Onboarding <i class="bi bi-arrow-right ms-1"></i>';
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    // 3. Registration Form Handler
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
