@@ -184,34 +184,40 @@ async function initStudentsDirectory() {
             tableBody.innerHTML = allStudents.map(s => `
                 <tr>
                     <td>
-                        <div class="fw-bold text-light">${s.full_name}</div>
+                        <div class="fw-bold text-white">${s.full_name}</div>
                         <small class="text-secondary">${s.email}</small>
-                        ${s.phone ? `<small class="text-muted d-block" style="font-size: 0.72rem;"><i class="bi bi-telephone me-1"></i>${s.phone}</small>` : ''}
+                        ${s.phone ? `<small class="text-secondary d-block mt-0.5" style="font-size: 0.76rem;"><i class="bi bi-telephone me-1 text-primary"></i>${s.phone}</small>` : ''}
+                        ${s.has_uploaded_resume ? `<div class="mt-1"><span class="badge badge-emerald-subtle py-0.5 px-2" style="font-size: 0.70rem;"><i class="bi bi-file-earmark-pdf me-1"></i>Resume Attached</span></div>` : ''}
                     </td>
                     <td>
-                        <div class="text-light small">${s.college_name || 'University Student'}</div>
+                        <div class="text-white small fw-medium">${s.college_name || 'University Student'}</div>
                         <small class="text-secondary">${s.degree} &bull; ${s.branch}</small>
                     </td>
                     <td>
-                        <span class="badge bg-surface-elevated text-light border border-subtle">${s.graduation_year || 'N/A'}</span>
-                        ${s.cgpa ? `<small class="text-secondary d-block mt-1">GPA: ${s.cgpa}</small>` : ''}
+                        <span class="badge bg-surface-elevated text-white border border-subtle fw-semibold px-2 py-1">${s.graduation_year || 'N/A'}</span>
+                        ${s.cgpa ? `<small class="text-secondary d-block mt-1 fw-medium">CGPA: <b class="text-white">${s.cgpa}</b></small>` : ''}
                     </td>
                     <td>
                         <div class="d-flex flex-wrap gap-1" style="max-width: 200px;">
-                            ${(s.skills || []).slice(0, 3).map(sk => `<span class="badge badge-primary-subtle py-0 px-2" style="font-size: 0.7rem;">${sk}</span>`).join('')}
-                            ${(s.skills || []).length > 3 ? `<span class="badge bg-surface-elevated text-light py-0 px-1" style="font-size: 0.68rem;">+${s.skills.length - 3}</span>` : ''}
+                            ${(s.skills || []).slice(0, 3).map(sk => `<span class="badge badge-primary-subtle py-0.5 px-2" style="font-size: 0.72rem;">${sk}</span>`).join('')}
+                            ${(s.skills || []).length > 3 ? `<span class="badge bg-surface-elevated text-white py-0.5 px-1.5" style="font-size: 0.70rem;">+${s.skills.length - 3}</span>` : ''}
                         </div>
                     </td>
                     <td>
-                        <span class="text-light small">${s.career_goal || 'Software Engineer'}</span>
+                        <span class="text-white small fw-medium">${s.career_goal || 'Software Engineer'}</span>
                     </td>
                     <td>
-                        <span class="badge badge-cyan-subtle">${s.applications_count || 0} submissions</span>
+                        <span class="badge badge-cyan-subtle px-2 py-1 fw-bold">${s.applications_count || 0} submissions</span>
                     </td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-gradient-primary text-white fw-bold view-student-btn" data-user-id="${s.user_id}">
-                            <i class="bi bi-person-badge me-1"></i>Full Profile
-                        </button>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-sm btn-gradient-primary text-white fw-bold view-student-btn" data-user-id="${s.user_id}">
+                                <i class="bi bi-person-badge me-1"></i>Full Profile
+                            </button>
+                            <a href="${s.resume_url || `/api/resume/student/${s.id}/pdf`}" target="_blank" class="btn btn-sm btn-glass text-light fw-bold" title="Open Attached Resume">
+                                <i class="bi bi-file-earmark-pdf text-danger"></i>
+                            </a>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -238,9 +244,8 @@ async function initStudentsDirectory() {
     loadStudents();
 }
 
-function attachStudentViewListeners(containerEl) {
-    if (!containerEl) return;
-    containerEl.querySelectorAll('.view-student-btn').forEach(btn => {
+function attachStudentViewListeners(container) {
+    container.querySelectorAll('.view-student-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const userId = btn.getAttribute('data-user-id');
             openStudentDetailModal(userId);
@@ -249,37 +254,61 @@ function attachStudentViewListeners(containerEl) {
 }
 
 async function openStudentDetailModal(userId) {
-    const modalEl = document.getElementById('studentDetailModal') || document.getElementById('studentDetailsModal');
-    if (!modalEl) return;
+    const modalEl = document.getElementById('studentDetailsModal');
+    const bodyEl = document.getElementById('studentDetailsModalBody');
+    if (!modalEl || !bodyEl) return;
 
-    const bodyEl = modalEl.querySelector('.modal-body') || document.getElementById('studentModalBody') || document.getElementById('studentDetailsModalBody');
-    if (bodyEl) {
-        bodyEl.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-primary"></div><p class="text-secondary small mt-2">Loading complete profile & applications...</p></div>`;
-    }
-
-    const modal = new bootstrap.Modal(modalEl);
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    bodyEl.innerHTML = `<div class="text-center py-5 text-secondary"><div class="spinner-border text-primary me-2"></div>Loading full student career profile...</div>`;
     modal.show();
 
     try {
         const res = await window.api.get(`/admin/students/${userId}`);
-        const data = res.data || {};
-        const p = data.profile || {};
-        const apps = data.applications || [];
-        const skills = data.skills || [];
+        const sData = res.data || {};
+        const p = sData.profile || {};
+        const apps = sData.applications || [];
+        const skills = sData.skills || [];
 
         bodyEl.innerHTML = `
             <!-- Top Identity Row -->
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start pb-3 border-bottom border-subtle mb-3 gap-2">
                 <div>
                     <h4 class="text-white fw-bold mb-1">${p.full_name || 'Student'}</h4>
-                    <p class="text-secondary small mb-1"><i class="bi bi-envelope me-1"></i>${p.email} &bull; <i class="bi bi-telephone me-1"></i>${p.phone || 'No phone provided'}</p>
-                    <p class="text-light small mb-0"><i class="bi bi-building me-1 text-primary"></i>${p.college_name || 'College'} &bull; ${p.degree} (${p.branch})</p>
+                    <p class="text-secondary small mb-1"><i class="bi bi-envelope me-1 text-primary"></i>${sData.email || p.email} &bull; <i class="bi bi-telephone me-1 text-primary"></i>${p.phone || 'No phone provided'}</p>
+                    <p class="text-white small mb-0"><i class="bi bi-building me-1 text-primary"></i>${p.college_name || 'College'} &bull; ${p.degree} (${p.branch})</p>
                 </div>
                 <div class="text-md-end d-flex flex-wrap gap-2 align-items-center">
                     <span class="badge bg-primary px-3 py-2 fs-6">Class of ${p.graduation_year || 2026}</span>
-                    <a href="/api/resume/student/${p.id}/pdf" target="_blank" class="btn btn-sm btn-gradient-primary fw-semibold shadow-sm">
-                        <i class="bi bi-file-earmark-pdf me-1"></i>Career DNA Resume
-                    </a>
+                </div>
+            </div>
+
+            <!-- Attached Official Resume Banner -->
+            <div class="p-3 bg-surface-elevated rounded-3 border border-subtle mb-3">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="brand-icon ${p.has_uploaded_resume ? 'bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30' : 'bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30'} rounded-3 p-2 fs-4" style="width: 44px; height: 44px;">
+                            <i class="bi ${p.has_uploaded_resume ? 'bi-file-earmark-pdf' : 'bi-file-earmark-person'}"></i>
+                        </div>
+                        <div>
+                            <small class="text-white text-uppercase fw-bold d-block" style="font-size: 0.72rem; letter-spacing: 0.04em;">
+                                ${p.has_uploaded_resume ? 'ATTACHED OFFICIAL RESUME' : 'CAREER DNA PROFILE RESUME'}
+                            </small>
+                            <span class="text-white fw-semibold small">
+                                ${p.has_uploaded_resume ? (p.resume_original_name || p.resume_filename) : 'Live Auto-Generated AI Profile Resume'}
+                            </span>
+                            ${p.resume_uploaded_at ? `<small class="text-secondary d-block" style="font-size: 0.75rem;"><i class="bi bi-clock-history me-1"></i>Uploaded: ${p.resume_uploaded_at}</small>` : ''}
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <a href="/api/resume/student/${p.id}/pdf" target="_blank" class="btn btn-sm btn-gradient-primary fw-bold shadow-sm px-3">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>Open ${p.has_uploaded_resume ? 'Uploaded Resume' : 'Resume'}
+                        </a>
+                        ${p.has_uploaded_resume ? `
+                            <a href="/api/resume/student/${p.id}/pdf?force_generate=true" target="_blank" class="btn btn-sm btn-glass text-light fw-medium">
+                                <i class="bi bi-robot me-1 text-primary"></i>AI Profile Resume
+                            </a>
+                        ` : ''}
+                    </div>
                 </div>
             </div>
 
@@ -287,14 +316,14 @@ async function openStudentDetailModal(userId) {
             <div class="row g-3 mb-3">
                 <div class="col-md-6">
                     <div class="p-3 bg-surface-elevated rounded border border-subtle h-100">
-                        <small class="text-light text-uppercase fw-semibold d-block" style="font-size: 0.72rem; letter-spacing: 0.03em;">CAREER GOAL & ASPIRATION</small>
+                        <small class="text-white text-uppercase fw-bold d-block mb-1" style="font-size: 0.72rem; letter-spacing: 0.04em;">CAREER GOAL & ASPIRATION</small>
                         <span class="text-white fw-semibold small">${p.career_goal || p.target_role || 'Software Engineering'}</span>
                         ${p.headline ? `<p class="text-secondary small mt-1 mb-0">${p.headline}</p>` : ''}
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="p-3 bg-surface-elevated rounded border border-subtle h-100">
-                        <small class="text-light text-uppercase fw-semibold d-block mb-1" style="font-size: 0.72rem; letter-spacing: 0.03em;">PROFILES & PORTFOLIO</small>
+                        <small class="text-white text-uppercase fw-bold d-block mb-1" style="font-size: 0.72rem; letter-spacing: 0.04em;">PROFILES & PORTFOLIO</small>
                         <div class="d-flex flex-wrap gap-2">
                             ${p.github_url ? `<a href="${p.github_url}" target="_blank" class="badge bg-dark border border-subtle text-light text-decoration-none py-1.5 px-2.5"><i class="bi bi-github me-1"></i>GitHub</a>` : ''}
                             ${p.linkedin_url ? `<a href="${p.linkedin_url}" target="_blank" class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 text-decoration-none py-1.5 px-2.5"><i class="bi bi-linkedin me-1"></i>LinkedIn</a>` : ''}
@@ -407,26 +436,26 @@ async function initOpportunitiesCatalog() {
                 <tr>
                     <td><input type="checkbox" class="form-check-input opp-checkbox" data-id="${opp.id}"></td>
                     <td>
-                        <div class="fw-bold text-light">${opp.title}</div>
+                        <div class="fw-bold text-white">${opp.title}</div>
                         <small class="text-secondary">${opp.company_name} &bull; ${opp.location || 'Remote'}</small>
                     </td>
-                    <td><span class="${getTypeBadgeClass(opp.opportunity_type)}" style="font-size: 0.68rem;">${opp.opportunity_type}</span></td>
+                    <td><span class="${getTypeBadgeClass(opp.opportunity_type)}" style="font-size: 0.72rem;">${opp.opportunity_type}</span></td>
                     <td>${statusBadge}</td>
                     <td>
-                        <button class="btn btn-sm btn-glass text-light py-0 px-2 view-applicants-btn fw-semibold" data-id="${opp.id}" style="font-size: 0.75rem;">
+                        <button class="btn btn-sm btn-glass text-white py-0.5 px-2.5 view-applicants-btn fw-bold shadow-sm" data-id="${opp.id}" style="font-size: 0.76rem;">
                             <i class="bi bi-people me-1 text-primary"></i>${opp.applicants_count || 0} Students
                         </button>
                     </td>
-                    <td><small class="text-light">${opp.deadline || 'Ongoing'}</small></td>
+                    <td><span class="text-white small fw-medium">${opp.deadline || 'Ongoing'}</span></td>
                     <td>
                         <div class="d-flex flex-wrap gap-1" style="max-width: 180px;">
-                            ${(opp.required_skills || []).slice(0, 2).map(s => `<span class="badge badge-primary-subtle py-0 px-1" style="font-size: 0.68rem;">${s}</span>`).join('')}
-                            ${(opp.required_skills || []).length > 2 ? `<span class="badge bg-surface-elevated text-light py-0 px-1" style="font-size: 0.65rem;">+${opp.required_skills.length - 2}</span>` : ''}
+                            ${(opp.required_skills || []).slice(0, 2).map(s => `<span class="badge badge-primary-subtle py-0.5 px-1.5" style="font-size: 0.70rem;">${s}</span>`).join('')}
+                            ${(opp.required_skills || []).length > 2 ? `<span class="badge bg-surface-elevated text-white py-0.5 px-1.5" style="font-size: 0.68rem;">+${opp.required_skills.length - 2}</span>` : ''}
                         </div>
                     </td>
                     <td class="text-end">
                         <div class="btn-group btn-group-sm">
-                            <button class="btn btn-glass text-light edit-opp-btn" data-id="${opp.id}" title="Edit Opportunity"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-glass text-white edit-opp-btn" data-id="${opp.id}" title="Edit Opportunity"><i class="bi bi-pencil"></i></button>
                             <button class="btn btn-glass text-danger delete-opp-btn" data-id="${opp.id}" title="Delete Opportunity"><i class="bi bi-trash"></i></button>
                         </div>
                     </td>
@@ -592,23 +621,23 @@ async function initOpportunitiesCatalog() {
                 return `
                     <tr>
                         <td>
-                            <div class="fw-bold text-light">${a.name}</div>
+                            <div class="fw-bold text-white">${a.name}</div>
                             <small class="text-secondary">${a.email}</small>
-                            ${a.phone ? `<small class="text-muted d-block"><i class="bi bi-telephone me-1"></i>${a.phone}</small>` : ''}
+                            ${a.phone ? `<small class="text-secondary d-block mt-0.5" style="font-size: 0.76rem;"><i class="bi bi-telephone me-1 text-primary"></i>${a.phone}</small>` : ''}
                             ${resumeBtn}
                         </td>
                         <td>
-                            <div class="text-light small">${a.college || 'University Student'}</div>
+                            <div class="text-white small fw-medium">${a.college || 'University Student'}</div>
                             <small class="text-secondary">${a.degree || a.branch || ''}</small>
                         </td>
                         <td>
                             <div class="d-flex flex-wrap gap-1" style="max-width: 180px;">
-                                ${(a.skills || []).slice(0, 3).map(s => `<span class="badge badge-primary-subtle py-0 px-2" style="font-size: 0.68rem;">${s}</span>`).join('')}
+                                ${(a.skills || []).slice(0, 3).map(s => `<span class="badge badge-primary-subtle py-0.5 px-2" style="font-size: 0.72rem;">${s}</span>`).join('')}
                             </div>
                         </td>
-                        <td><span class="text-light small">${a.applied_date}</span></td>
-                        <td><span class="badge badge-cyan-subtle text-uppercase">${(a.status || 'Applied').replace('_', ' ')}</span></td>
-                        <td><div class="text-secondary small" style="max-width: 220px; line-height: 1.35;">${detailsNote}</div></td>
+                        <td><span class="text-white small fw-medium">${a.applied_date}</span></td>
+                        <td><span class="badge badge-cyan-subtle text-uppercase px-2 py-1 fw-bold">${(a.status || 'Applied').replace('_', ' ')}</span></td>
+                        <td><div class="text-secondary small fw-medium" style="max-width: 220px; line-height: 1.4;">${detailsNote}</div></td>
                     </tr>
                 `;
             }).join('');
@@ -798,30 +827,30 @@ async function initApplicationsMonitor() {
             tableBody.innerHTML = allApps.map(a => {
                 let resumeBtn = `<span class="text-secondary small">None</span>`;
                 if (a.resume_url) {
-                    resumeBtn = `<a href="${a.resume_url}" target="_blank" class="badge bg-primary text-white text-decoration-none py-1.5 px-2.5 fw-semibold shadow-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Resume</a>`;
+                    resumeBtn = `<a href="${a.resume_url}" target="_blank" class="badge bg-primary text-white text-decoration-none py-1.5 px-2.5 fw-bold shadow-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Resume</a>`;
                 }
 
                 return `
                     <tr>
                         <td>
-                            <div class="fw-bold text-light">${a.student_name}</div>
+                            <div class="fw-bold text-white">${a.student_name}</div>
                             <small class="text-secondary">${a.student_email}</small>
-                            ${a.student_phone ? `<small class="text-muted d-block" style="font-size: 0.72rem;"><i class="bi bi-telephone me-1"></i>${a.student_phone}</small>` : ''}
+                            ${a.student_phone ? `<small class="text-secondary d-block mt-0.5" style="font-size: 0.76rem;"><i class="bi bi-telephone me-1 text-primary"></i>${a.student_phone}</small>` : ''}
                         </td>
                         <td>
-                            <div class="fw-bold text-light small">${a.opportunity_title}</div>
-                            <small class="text-secondary"><i class="bi bi-building me-1"></i>${a.company_name}</small>
+                            <div class="fw-bold text-white small">${a.opportunity_title}</div>
+                            <small class="text-secondary"><i class="bi bi-building me-1 text-primary"></i>${a.company_name}</small>
                         </td>
                         <td>
-                            <span class="${getTypeBadgeClass(a.opportunity_type)}" style="font-size: 0.68rem;">
+                            <span class="${getTypeBadgeClass(a.opportunity_type)}" style="font-size: 0.72rem;">
                                 ${a.opportunity_type}
                             </span>
                         </td>
                         <td>
-                            <span class="text-light small">${a.applied_date}</span>
+                            <span class="text-white small fw-medium">${a.applied_date}</span>
                         </td>
                         <td>
-                            <span class="badge badge-cyan-subtle text-uppercase">${(a.status || 'Applied').replace('_', ' ')}</span>
+                            <span class="badge badge-cyan-subtle text-uppercase px-2 py-1 fw-bold">${(a.status || 'Applied').replace('_', ' ')}</span>
                         </td>
                         <td>
                             ${resumeBtn}

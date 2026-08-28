@@ -24,52 +24,55 @@
     <!-- Pipeline Stats Row -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
-            <div class="card bg-surface-card p-3 text-center border border-subtle">
-                <small class="text-secondary text-uppercase fw-semibold d-block">TOTAL TRACKED</small>
-                <span class="fs-4 fw-bold text-light" id="statTotalApps">0</span>
+            <div class="card bg-surface-card p-3.5 text-center border border-subtle shadow-sm h-100">
+                <small class="text-secondary text-uppercase fw-bold d-block mb-1" style="font-size: 0.78rem;">TOTAL TRACKED</small>
+                <span class="fs-4 fw-bold text-white" id="statTotalApps">0</span>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card bg-surface-card p-3 text-center border border-subtle">
-                <small class="text-secondary text-uppercase fw-semibold d-block">ACTIVE PIPELINE</small>
+            <div class="card bg-surface-card p-3.5 text-center border border-subtle shadow-sm h-100">
+                <small class="text-secondary text-uppercase fw-bold d-block mb-1" style="font-size: 0.78rem;">ACTIVE PIPELINE</small>
                 <span class="fs-4 fw-bold text-primary" id="statActivePipeline">0</span>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card bg-surface-card p-3 text-center border border-subtle">
-                <small class="text-secondary text-uppercase fw-semibold d-block">INTERVIEW / ADVANCEMENT RATE</small>
+            <div class="card bg-surface-card p-3.5 text-center border border-subtle shadow-sm h-100">
+                <small class="text-secondary text-uppercase fw-bold d-block mb-1" style="font-size: 0.78rem;">INTERVIEW / ADVANCEMENT</small>
                 <span class="fs-4 fw-bold text-gradient-secondary" id="statInterviewRate">0%</span>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card bg-surface-card p-3 text-center border border-subtle">
-                <small class="text-secondary text-uppercase fw-semibold d-block">OFFER / WINNER RATE</small>
+            <div class="card bg-surface-card p-3.5 text-center border border-subtle shadow-sm h-100">
+                <small class="text-secondary text-uppercase fw-bold d-block mb-1" style="font-size: 0.78rem;">OFFER / WINNER RATE</small>
                 <span class="fs-4 fw-bold text-gradient-accent" id="statOfferRate">0%</span>
             </div>
         </div>
     </div>
 
     <!-- Workflow Selector Tabs -->
-    <div class="card bg-surface-card p-2 mb-4 border border-subtle">
+    <div class="card bg-surface-card p-3 mb-4 border border-subtle shadow-sm">
         <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
-            <div class="d-flex flex-wrap gap-1" id="workflowFilterNav">
-                <button class="btn btn-sm btn-glass active workflow-tab-btn" data-type="all">
+            <div class="d-flex flex-wrap gap-1.5" id="workflowFilterNav">
+                <button class="btn btn-sm btn-glass active workflow-tab-btn px-3 py-2 fw-semibold" data-type="all">
                     <i class="bi bi-grid-fill me-1"></i>All Workflows
                 </button>
-                <button class="btn btn-sm btn-glass workflow-tab-btn" data-type="job">
-                    <i class="bi bi-briefcase me-1"></i>Jobs & Internships
+                <button class="btn btn-sm btn-glass workflow-tab-btn px-3 py-2 fw-semibold" data-type="job">
+                    <i class="bi bi-briefcase me-1 text-primary"></i>Jobs & Internships
                 </button>
-                <button class="btn btn-sm btn-glass workflow-tab-btn" data-type="hackathon">
-                    <i class="bi bi-lightning-charge me-1"></i>Hackathons
+                <button class="btn btn-sm btn-glass workflow-tab-btn px-3 py-2 fw-semibold" data-type="hackathon">
+                    <i class="bi bi-lightning-charge me-1 text-warning"></i>Hackathons
                 </button>
-                <button class="btn btn-sm btn-glass workflow-tab-btn" data-type="competition">
-                    <i class="bi bi-trophy me-1"></i>Competitions
+                <button class="btn btn-sm btn-glass workflow-tab-btn px-3 py-2 fw-semibold" data-type="competition">
+                    <i class="bi bi-trophy me-1 text-danger"></i>Competitions
                 </button>
-                <button class="btn btn-sm btn-glass workflow-tab-btn" data-type="certification">
-                    <i class="bi bi-award me-1"></i>Certifications & Courses
+                <button class="btn btn-sm btn-glass workflow-tab-btn px-3 py-2 fw-semibold" data-type="certification">
+                    <i class="bi bi-award me-1 text-info"></i>Certifications & Courses
+                </button>
+                <button class="btn btn-sm btn-glass workflow-tab-btn px-3 py-2 fw-semibold" data-type="workshop">
+                    <i class="bi bi-mortarboard me-1 text-success"></i>Workshops & Bootcamps
                 </button>
             </div>
-            <div class="text-secondary small px-2 d-none d-md-block">
+            <div class="text-secondary small px-2 d-none d-md-block fw-medium">
                 <i class="bi bi-info-circle me-1"></i><span id="workflowHintText">Showing unified recruitment pipeline</span>
             </div>
         </div>

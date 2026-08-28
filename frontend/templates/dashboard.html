@@ -3,39 +3,41 @@
 {% block title %}Dashboard — Career DNA AI{% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<div class="container py-4 py-md-5">
     <!-- Welcome Header Banner -->
-    <div class="row g-4 mb-4">
+    <div class="row g-4 mb-4 mb-md-5">
         <div class="col-12">
             <div class="card bg-surface-card p-4 p-md-5 border border-subtle shadow-lg position-relative overflow-hidden">
-                <div class="row align-items-center">
+                <div class="row align-items-center g-4">
                     <div class="col-lg-8">
-                        <span class="badge badge-primary-subtle text-uppercase mb-2">STUDENT INTELLIGENCE HUB</span>
-                        <h2 class="display-6 fw-bold text-light mb-1">Welcome, <span id="dashUserName" class="text-gradient">Student</span>!</h2>
-                        <p class="text-secondary mb-3" id="dashUserHeadline">Computer Science Student &bull; Full-Stack & AI</p>
+                        <span class="badge badge-primary-subtle text-uppercase mb-2.5 px-3 py-1.5 fw-bold" style="font-size: 0.78rem; letter-spacing: 0.05em;">
+                            <i class="bi bi-shield-check me-1"></i>STUDENT INTELLIGENCE HUB
+                        </span>
+                        <h2 class="fs-2 fw-bold text-white mb-2">Welcome, <span id="dashUserName" class="text-gradient">Student</span>!</h2>
+                        <p class="text-secondary fs-6 mb-3" id="dashUserHeadline">Computer Science Student &bull; Full-Stack & AI</p>
 
                         <!-- Profile Completeness Widget -->
                         <div class="d-flex align-items-center gap-3 max-w-md">
                             <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between small text-muted mb-1">
-                                    <span>Profile Completeness</span>
-                                    <span id="profileCompletenessText" class="fw-bold text-light">0%</span>
+                                <div class="d-flex justify-content-between small text-secondary mb-1.5">
+                                    <span class="fw-semibold text-light">Profile Completeness</span>
+                                    <span id="profileCompletenessText" class="fw-bold text-white fs-6">0%</span>
                                 </div>
-                                <div class="progress bg-surface" style="height: 6px;">
-                                    <div id="profileCompletenessBar" class="progress-bar bg-gradient-primary" style="width: 0%;"></div>
+                                <div class="progress bg-surface" style="height: 10px; border-radius: 6px;">
+                                    <div id="profileCompletenessBar" class="progress-bar bg-gradient-primary" style="width: 0%; border-radius: 6px; transition: width 0.5s ease;"></div>
                                 </div>
                             </div>
-                            <a href="/profile" class="btn btn-sm btn-glass"><i class="bi bi-pencil me-1"></i>Edit Profile</a>
+                            <a href="/profile" class="btn btn-sm btn-glass px-3"><i class="bi bi-pencil me-1.5"></i>Edit Profile</a>
                         </div>
                     </div>
 
                     <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-                        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                            <a href="/career-analysis" class="btn btn-gradient-primary">
-                                <i class="bi bi-stars me-1"></i>Run AI Analysis
+                        <div class="d-flex flex-wrap gap-2.5 justify-content-lg-end">
+                            <a href="/career-analysis" class="btn btn-gradient-primary fw-bold">
+                                <i class="bi bi-stars me-1.5"></i>Run AI Analysis
                             </a>
-                            <a href="/recommendations" class="btn btn-glass">
-                                <i class="bi bi-compass me-1"></i>Explore Matches
+                            <a href="/recommendations" class="btn btn-glass fw-semibold">
+                                <i class="bi bi-compass me-1.5"></i>Explore Matches
                             </a>
                         </div>
                     </div>
@@ -45,26 +47,26 @@
     </div>
 
     <!-- Core Metrics & AI Insights Row -->
-    <div class="row g-4 mb-4">
+    <div class="row g-4 mb-4 mb-md-5">
         <!-- 1. Career Readiness Gauge -->
         <div class="col-lg-4">
-            <div class="card bg-surface-card p-4 text-center h-100 d-flex flex-column justify-content-between">
+            <div class="card bg-surface-card p-4 text-center h-100 d-flex flex-column justify-content-between shadow-md">
                 <div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="text-secondary text-uppercase fw-bold small mb-0">Career Readiness Score</h6>
-                        <a href="/career-analysis" class="small text-primary text-decoration-none">View Diagnostics &rarr;</a>
+                        <h6 class="text-white text-uppercase fw-bold mb-0" style="font-size: 0.92rem; letter-spacing: 0.04em;">Career Readiness Score</h6>
+                        <a href="/career-analysis" class="small text-primary fw-bold text-decoration-none">Diagnostics &rarr;</a>
                     </div>
-                    <div class="position-relative mx-auto my-2" style="width: 170px; height: 130px;">
+                    <div class="position-relative mx-auto my-2" style="width: 190px; height: 145px;">
                         <canvas id="readinessGaugeChart"></canvas>
                         <div class="position-absolute top-50 start-50 translate-middle mt-2 text-center">
-                            <span class="display-6 fw-bold text-light" id="dashReadinessScore">--</span>
-                            <small class="d-block text-muted" style="font-size: 0.7rem;">out of 100</small>
+                            <span class="display-5 fw-bold text-white" id="dashReadinessScore">--</span>
+                            <small class="d-block text-secondary fw-semibold" style="font-size: 0.86rem;">out of 100</small>
                         </div>
                     </div>
                 </div>
                 <div class="p-3 bg-surface-elevated rounded-3 border border-subtle text-start mt-3">
-                    <small class="text-light fw-bold d-block mb-1"><i class="bi bi-robot text-primary me-1"></i>AI Assessment</small>
-                    <p class="text-secondary small mb-0" id="dashAISummary" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                    <small class="text-white fw-bold d-block mb-1 fs-6"><i class="bi bi-robot text-primary me-1.5"></i>AI Assessment</small>
+                    <p class="text-secondary small mb-0" id="dashAISummary" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.55;">
                         Loading AI diagnostics...
                     </p>
                 </div>
@@ -73,33 +75,33 @@
 
         <!-- 2. Application Pipeline Stats -->
         <div class="col-lg-4">
-            <div class="card bg-surface-card p-4 h-100 d-flex flex-column justify-content-between">
+            <div class="card bg-surface-card p-4 h-100 d-flex flex-column justify-content-between shadow-md">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="text-secondary text-uppercase fw-bold small mb-0">Application Pipeline</h6>
-                    <a href="/applications" class="small text-primary text-decoration-none">Kanban Board &rarr;</a>
+                    <h6 class="text-white text-uppercase fw-bold mb-0" style="font-size: 0.92rem; letter-spacing: 0.04em;">Application Pipeline</h6>
+                    <a href="/applications" class="small text-primary fw-bold text-decoration-none">Kanban Tracker &rarr;</a>
                 </div>
 
-                <div class="row g-2 mb-3">
-                    <div class="col-4 text-center p-2 bg-surface-elevated rounded border border-subtle">
-                        <small class="text-muted d-block" style="font-size: 0.72rem;">TOTAL</small>
-                        <span class="fs-4 fw-bold text-light" id="dashStatTotal">0</span>
+                <div class="row g-2.5 mb-3">
+                    <div class="col-4 text-center p-3 bg-surface-elevated rounded-3 border border-subtle">
+                        <small class="text-secondary d-block fw-bold mb-1" style="font-size: 0.80rem; letter-spacing: 0.03em;">TOTAL</small>
+                        <span class="fs-3 fw-bold text-white" id="dashStatTotal">0</span>
                     </div>
-                    <div class="col-4 text-center p-2 bg-surface-elevated rounded border border-subtle">
-                        <small class="text-muted" style="font-size: 0.72rem;">INTERVIEW %</small>
-                        <span class="fs-4 fw-bold text-gradient-secondary" id="dashStatInterview">0%</span>
+                    <div class="col-4 text-center p-3 bg-surface-elevated rounded-3 border border-subtle">
+                        <small class="text-secondary d-block fw-bold mb-1" style="font-size: 0.80rem; letter-spacing: 0.03em;">INTERVIEWS</small>
+                        <span class="fs-3 fw-bold text-gradient-secondary" id="dashStatInterview">0%</span>
                     </div>
-                    <div class="col-4 text-center p-2 bg-surface-elevated rounded border border-subtle">
-                        <small class="text-muted" style="font-size: 0.72rem;">OFFER %</small>
-                        <span class="fs-4 fw-bold text-gradient-accent" id="dashStatOffer">0%</span>
+                    <div class="col-4 text-center p-3 bg-surface-elevated rounded-3 border border-subtle">
+                        <small class="text-secondary d-block fw-bold mb-1" style="font-size: 0.80rem; letter-spacing: 0.03em;">OFFERS</small>
+                        <span class="fs-3 fw-bold text-gradient-accent" id="dashStatOffer">0%</span>
                     </div>
                 </div>
 
                 <div class="d-grid gap-2">
-                    <a href="/applications" class="btn btn-sm btn-glass text-center">
-                        <i class="bi bi-kanban me-1"></i>Open Kanban Tracker
+                    <a href="/applications" class="btn btn-sm btn-glass text-center fw-semibold py-2.5">
+                        <i class="bi bi-kanban me-1.5"></i>Open Kanban Tracker
                     </a>
-                    <a href="/resume-builder" class="btn btn-sm btn-glass text-center">
-                        <i class="bi bi-file-earmark-person me-1"></i>Update AI Resume
+                    <a href="/resume-builder" class="btn btn-sm btn-glass text-center fw-semibold py-2.5">
+                        <i class="bi bi-file-earmark-person me-1.5"></i>Update AI Resume
                     </a>
                 </div>
             </div>
@@ -107,26 +109,26 @@
 
         <!-- 3. Active Roadmap Milestone -->
         <div class="col-lg-4">
-            <div class="card bg-surface-card p-4 h-100 d-flex flex-column justify-content-between">
+            <div class="card bg-surface-card p-4 h-100 d-flex flex-column justify-content-between shadow-md">
                 <div>
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="text-secondary text-uppercase fw-bold small mb-0">Roadmap Progress</h6>
-                        <a href="/roadmap" class="small text-primary text-decoration-none">Full Timeline &rarr;</a>
+                        <h6 class="text-white text-uppercase fw-bold mb-0" style="font-size: 0.92rem; letter-spacing: 0.04em;">Roadmap Progress</h6>
+                        <a href="/roadmap" class="small text-primary fw-bold text-decoration-none">Full Timeline &rarr;</a>
                     </div>
-                    <div class="d-flex justify-content-between small text-muted mb-1">
-                        <span>Overall Milestone Completion</span>
-                        <span id="dashRoadmapProgressText" class="fw-bold text-light">0%</span>
+                    <div class="d-flex justify-content-between small text-secondary mb-1.5">
+                        <span class="fw-semibold text-light">Overall Completion</span>
+                        <span id="dashRoadmapProgressText" class="fw-bold text-white fs-6">0%</span>
                     </div>
-                    <div class="progress bg-surface mb-3" style="height: 6px;">
-                        <div id="dashRoadmapProgressBar" class="progress-bar bg-gradient-secondary" style="width: 0%;"></div>
+                    <div class="progress bg-surface mb-3" style="height: 10px; border-radius: 6px;">
+                        <div id="dashRoadmapProgressBar" class="progress-bar bg-gradient-secondary" style="width: 0%; border-radius: 6px; transition: width 0.5s ease;"></div>
                     </div>
 
                     <ul class="list-group list-group-flush bg-transparent" id="dashRoadmapMilestones">
-                        <li class="list-group-item bg-transparent text-muted small px-0">Loading roadmap stages...</li>
+                        <li class="list-group-item bg-transparent text-secondary small px-0">Loading roadmap stages...</li>
                     </ul>
                 </div>
 
-                <a href="/roadmap" class="btn btn-sm btn-gradient-secondary w-100 mt-3">
+                <a href="/roadmap" class="btn btn-sm btn-gradient-secondary w-100 mt-3 py-2.5 fw-bold">
                     Continue Step-by-Step Path <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
@@ -134,20 +136,22 @@
     </div>
 
     <!-- Upcoming Active Hackathons Row -->
-    <div class="row g-4 mb-4">
+    <div class="row g-4 mb-4 mb-md-5">
         <div class="col-12">
-            <div class="card bg-surface-card p-4 border border-subtle">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="card bg-surface-card p-4 p-md-4 border border-subtle shadow-md">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
                     <div>
-                        <span class="badge badge-amber-subtle text-uppercase mb-1" style="font-size: 0.7rem;"><i class="bi bi-laptop me-1"></i>ACTIVE COMPETITIONS</span>
-                        <h4 class="text-light fw-bold mb-0">Upcoming Hackathons</h4>
+                        <span class="badge badge-amber-subtle text-uppercase mb-1.5 px-2.5 py-1 fw-bold" style="font-size: 0.76rem;">
+                            <i class="bi bi-laptop me-1"></i>ACTIVE COMPETITIONS
+                        </span>
+                        <h4 class="text-white fw-bold mb-1">Upcoming Hackathons</h4>
                         <p class="text-secondary small mb-0">Only currently active hackathons with open registration deadlines are displayed</p>
                     </div>
-                    <a href="/recommendations?type=hackathon" class="btn btn-sm btn-glass">View All Hackathons &rarr;</a>
+                    <a href="/recommendations?type=hackathon" class="btn btn-sm btn-glass fw-semibold align-self-start align-self-md-auto">View All Hackathons &rarr;</a>
                 </div>
 
                 <div class="row g-3" id="dashHackathonsContainer">
-                    <div class="col-12 py-3 text-center">
+                    <div class="col-12 py-4 text-center">
                         <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
                         <span class="text-muted small ms-2">Loading upcoming hackathons...</span>
                     </div>
@@ -159,12 +163,12 @@
     <!-- Recommendations Stream Row -->
     <div class="row g-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
                 <div>
-                    <h4 class="text-light fw-bold mb-0">Top Recommended Opportunities</h4>
+                    <h4 class="text-white fw-bold mb-1">Top Recommended Opportunities</h4>
                     <p class="text-secondary small mb-0">Ranked specifically by matching skill overlap with your verified profile</p>
                 </div>
-                <a href="/recommendations" class="btn btn-sm btn-glass">View All Matches &rarr;</a>
+                <a href="/recommendations" class="btn btn-sm btn-glass fw-semibold align-self-start align-self-md-auto">View All Matches &rarr;</a>
             </div>
 
             <div id="dashRecommendationsContainer">

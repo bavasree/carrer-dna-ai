@@ -27,26 +27,30 @@
     </div>
 
     <!-- Filter & Search Controls -->
-    <div class="card bg-surface-card p-3 mb-4 border border-subtle shadow-sm">
-        <div class="row g-2 align-items-center">
+    <div class="card bg-surface-card p-4 mb-4 border border-subtle shadow-md">
+        <div class="row g-3 align-items-center">
             <div class="col-lg-5 col-md-6">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-surface-elevated text-secondary border-subtle"><i class="bi bi-search"></i></span>
-                    <input type="text" class="form-control text-light" id="studentSearchInput" placeholder="Search by name, email, skills, department, or goal...">
+                <div class="input-group">
+                    <span class="input-group-text bg-surface-elevated text-secondary border-subtle px-3"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control text-white" id="studentSearchInput" placeholder="Search by name, email, skills, department, or goal...">
                 </div>
             </div>
             <div class="col-6 col-lg-3 col-md-3">
-                <select class="form-select form-select-sm" id="studentBranchFilter">
+                <select class="form-select text-white" id="studentBranchFilter">
                     <option value="all">All Departments / Branches</option>
-                    <option value="Computer Science">Computer Science</option>
-                    <option value="Information Technology">Information Technology</option>
-                    <option value="Electrical">Electrical / Electronics</option>
-                    <option value="Data Science">Data Science / AI</option>
-                    <option value="Software Engineering">Software Engineering</option>
+                    <option value="Information Technology">Information Technology (IT)</option>
+                    <option value="Computer Science">Computer Science (CSE)</option>
+                    <option value="Data Science">Data Science & AI (AIDS)</option>
+                    <option value="Software Engineering">Software Engineering (SE)</option>
+                    <option value="Electronics">Electronics & Communication (ECE)</option>
+                    <option value="Electrical">Electrical & Electronics (EEE)</option>
+                    <option value="Mechanical">Mechanical Engineering (MECH)</option>
+                    <option value="Civil">Civil Engineering (CIVIL)</option>
+                    <option value="Cyber Security">Cyber Security (CYS)</option>
                 </select>
             </div>
             <div class="col-6 col-lg-2 col-md-3">
-                <select class="form-select form-select-sm" id="studentYearFilter">
+                <select class="form-select text-white" id="studentYearFilter">
                     <option value="all">All Grad Years</option>
                     <option value="2025">Class of 2025</option>
                     <option value="2026">Class of 2026</option>
@@ -54,9 +58,9 @@
                     <option value="2028">Class of 2028</option>
                 </select>
             </div>
-            <div class="col-12 col-lg-2 d-flex justify-content-lg-end justify-content-between align-items-center gap-2">
-                <span class="badge bg-surface-elevated text-light border border-subtle py-2 px-3 fw-semibold">
-                    <b class="text-white" id="studentCountBadge">0</b> students
+            <div class="col-lg-2 col-md-12 text-end">
+                <span class="badge bg-surface-elevated text-white border border-subtle px-3 py-2 fw-semibold" id="studentCountBadge">
+                    Loading students...
                 </span>
                 <button class="btn btn-sm btn-glass text-light fw-medium" id="refreshStudentsBtn"><i class="bi bi-arrow-clockwise me-1 text-primary"></i>Refresh</button>
             </div>

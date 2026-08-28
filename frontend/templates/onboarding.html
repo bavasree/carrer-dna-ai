@@ -62,7 +62,18 @@
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label" for="obBranch">Branch / Major</label>
-                                <input type="text" class="form-control" id="obBranch" placeholder="e.g. Computer Science">
+                                <input type="text" class="form-control" id="obBranch" list="branchSuggestions" placeholder="e.g. Information Technology (IT)">
+                                <datalist id="branchSuggestions">
+                                    <option value="Information Technology (IT)"></option>
+                                    <option value="Computer Science and Engineering (CSE)"></option>
+                                    <option value="Data Science & AI (AIDS)"></option>
+                                    <option value="Software Engineering (SE)"></option>
+                                    <option value="Electronics & Communication (ECE)"></option>
+                                    <option value="Electrical & Electronics (EEE)"></option>
+                                    <option value="Mechanical Engineering (MECH)"></option>
+                                    <option value="Civil Engineering (CIVIL)"></option>
+                                    <option value="Cyber Security (CYS)"></option>
+                                </datalist>
                             </div>
                         </div>
                         <div class="row g-2 mb-3">

@@ -24,16 +24,16 @@
     </div>
 
     <!-- Filter & Search Controls -->
-    <div class="card bg-surface-card p-3 mb-4 border border-subtle shadow-sm">
-        <div class="row g-2 align-items-center">
+    <div class="card bg-surface-card p-4 mb-4 border border-subtle shadow-md">
+        <div class="row g-3 align-items-center">
             <div class="col-lg-4 col-md-6">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-surface-elevated text-secondary border-subtle"><i class="bi bi-search"></i></span>
-                    <input type="text" class="form-control text-light" id="adminAppSearchInput" placeholder="Search by student, email, opportunity title, or company...">
+                <div class="input-group">
+                    <span class="input-group-text bg-surface-elevated text-secondary border-subtle px-3"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control text-white" id="adminAppSearchInput" placeholder="Search by student, email, opportunity title, or company...">
                 </div>
             </div>
             <div class="col-6 col-lg-3 col-md-3">
-                <select class="form-select form-select-sm" id="adminAppTypeFilter">
+                <select class="form-select text-white" id="adminAppTypeFilter">
                     <option value="all">All Opportunity Types</option>
                     <option value="hackathon">Hackathons</option>
                     <option value="internship">Internships</option>
@@ -44,7 +44,7 @@
                 </select>
             </div>
             <div class="col-6 col-lg-3 col-md-3">
-                <select class="form-select form-select-sm" id="adminAppStatusFilter">
+                <select class="form-select text-white" id="adminAppStatusFilter">
                     <option value="all">All Stages / Statuses</option>
                     <option value="registered">Registered</option>
                     <option value="applied">Applied</option>
@@ -60,7 +60,7 @@
                 </select>
             </div>
             <div class="col-12 col-lg-2 d-flex justify-content-lg-end justify-content-between align-items-center gap-2">
-                <span class="badge bg-surface-elevated text-light border border-subtle py-2 px-3 fw-semibold">
+                <span class="badge bg-surface-elevated text-white border border-subtle py-2 px-3 fw-semibold">
                     <b class="text-white" id="adminAppCountBadge">0</b> submissions
                 </span>
             </div>

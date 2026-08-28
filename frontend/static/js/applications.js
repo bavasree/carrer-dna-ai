@@ -112,6 +112,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 { key: 'completed', label: 'Completed', icon: 'bi-award', color: 'success' },
                 { key: 'expired', label: 'Dropped / Expired', icon: 'bi-x-circle', color: 'danger' }
             ]
+        },
+        workshop: {
+            label: 'Workshops & Bootcamps',
+            default_status: 'registered',
+            stages: [
+                { key: 'registered', label: 'RSVP Confirmed', icon: 'bi-ticket-perforated', color: 'primary' },
+                { key: 'attending', label: 'Attending', icon: 'bi-camera-video', color: 'info' },
+                { key: 'completed', label: 'Masterclass Certified', icon: 'bi-patch-check', color: 'success' },
+                { key: 'cancelled', label: 'Cancelled / Missed', icon: 'bi-x-circle', color: 'danger' }
+            ]
         }
     };
 

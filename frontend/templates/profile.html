@@ -56,7 +56,18 @@
                         </div>
                         <div class="col-sm-6">
                             <label class="form-label" for="profBranch">Branch / Major</label>
-                            <input type="text" class="form-control" id="profBranch">
+                            <input type="text" class="form-control" id="profBranch" list="profBranchSuggestions" placeholder="e.g. Information Technology (IT)">
+                            <datalist id="profBranchSuggestions">
+                                <option value="Information Technology (IT)"></option>
+                                <option value="Computer Science and Engineering (CSE)"></option>
+                                <option value="Data Science & AI (AIDS)"></option>
+                                <option value="Software Engineering (SE)"></option>
+                                <option value="Electronics & Communication (ECE)"></option>
+                                <option value="Electrical & Electronics (EEE)"></option>
+                                <option value="Mechanical Engineering (MECH)"></option>
+                                <option value="Civil Engineering (CIVIL)"></option>
+                                <option value="Cyber Security (CYS)"></option>
+                            </datalist>
                         </div>
                     </div>
 
@@ -110,8 +121,58 @@
             </div>
         </div>
 
-        <!-- Right Column: Skills, Projects, Certifications -->
+        <!-- Right Column: Attached Resume, Skills, Projects, Certifications -->
         <div class="col-lg-5">
+            <!-- 0. Attached Official Resume Card -->
+            <div class="card bg-surface-card p-4 shadow-md mb-4 border border-subtle">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light fw-bold mb-0">
+                        <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Attached Resume
+                    </h5>
+                    <span class="badge badge-primary-subtle py-1 px-2.5 fw-bold" id="resumeStatusBadge">Checking...</span>
+                </div>
+
+                <!-- State: Resume Attached -->
+                <div id="resumeAttachedState" style="display: none;">
+                    <div class="p-3 bg-surface-elevated rounded-3 border border-subtle mb-3">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <div class="brand-icon bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30 rounded-3 p-2 fs-4" style="width: 44px; height: 44px;">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <div class="fw-bold text-white text-truncate" id="profileResumeFileName">resume.pdf</div>
+                                <small class="text-secondary d-block" id="profileResumeUploadedAt">Uploaded</small>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mt-3 pt-2 border-top border-subtle">
+                            <a href="/api/profile/resume" target="_blank" class="btn btn-sm btn-gradient-primary fw-bold px-3" id="btnViewProfileResume">
+                                <i class="bi bi-box-arrow-up-right me-1"></i>View / Open
+                            </a>
+                            <label class="btn btn-sm btn-glass text-light mb-0 cursor-pointer">
+                                <i class="bi bi-arrow-repeat me-1 text-primary"></i>Replace Resume
+                                <input type="file" id="profileResumeReplaceInput" accept=".pdf,.doc,.docx" style="display: none;">
+                            </label>
+                            <button type="button" class="btn btn-sm btn-glass-danger" id="btnDeleteProfileResume">
+                                <i class="bi bi-trash me-1"></i>Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- State: No Resume / Upload Form -->
+                <div id="resumeUploadState">
+                    <div class="p-4 bg-surface-elevated rounded-3 border border-dashed text-center">
+                        <i class="bi bi-cloud-arrow-up text-primary fs-1 mb-2 d-block"></i>
+                        <h6 class="text-white fw-bold mb-1">Attach Your Official Resume</h6>
+                        <p class="text-secondary small mb-3" style="font-size: 0.82rem;">Upload your real resume (PDF, DOC, DOCX) to attach directly to your profile and job/internship applications.</p>
+                        <label class="btn btn-sm btn-gradient-primary fw-bold px-3 py-2 cursor-pointer shadow-sm">
+                            <i class="bi bi-file-earmark-arrow-up me-1"></i>Select Resume to Upload
+                            <input type="file" id="profileResumeFileInput" accept=".pdf,.doc,.docx" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <!-- 1. Technical Skills Card -->
             <div class="card bg-surface-card p-4 shadow-md mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">

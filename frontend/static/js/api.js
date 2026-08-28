@@ -123,6 +123,41 @@ class ApiClient {
         return this.request(endpoint, { ...options, method: 'DELETE' });
     }
 
+    async upload(endpoint, formData, options = {}) {
+        const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+        const headers = { ...(options.headers || {}) };
+        const token = this.getToken();
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: options.method || 'POST',
+                headers,
+                body: formData
+            });
+
+            const data = await response.json().catch(() => ({
+                success: false,
+                message: `Server returned status ${response.status}`
+            }));
+
+            if (!response.ok || data.success === false) {
+                const errorMsg = data.message || 'File upload failed.';
+                if (!options.silent) {
+                    this.showToast(errorMsg, 'danger');
+                }
+                throw new Error(errorMsg);
+            }
+
+            return data;
+        } catch (err) {
+            console.error(`API Upload Error [${endpoint}]:`, err);
+            throw err;
+        }
+    }
+
     // ==========================================
     // UI Feedback Helpers (Toasts & AI Modal)
     // ==========================================

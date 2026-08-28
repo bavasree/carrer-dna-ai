@@ -44,9 +44,18 @@ def create_app(config_name='default'):
     cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
     limiter.init_app(app)
 
-    # Ensure Uploads Directory Exists
-    upload_folder = os.path.join(cfg.STATIC_FOLDER, 'uploads', 'resumes')
-    os.makedirs(upload_folder, exist_ok=True)
+    # Ensure Uploads Directory Exists (safely handle serverless read-only filesystems)
+    if os.getenv('VERCEL') or os.getenv('AWS_LAMBDA_FUNCTION_NAME'):
+        upload_folder = os.path.join('/tmp', 'uploads', 'resumes')
+    else:
+        upload_folder = os.path.join(cfg.STATIC_FOLDER, 'uploads', 'resumes')
+    
+    try:
+        os.makedirs(upload_folder, exist_ok=True)
+    except Exception:
+        upload_folder = os.path.join('/tmp', 'uploads', 'resumes')
+        os.makedirs(upload_folder, exist_ok=True)
+
     app.config['UPLOAD_FOLDER'] = upload_folder
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB max
 

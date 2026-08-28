@@ -27,7 +27,16 @@ class Config:
     
     # Default to MySQL via PyMySQL
     default_mysql_uri = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', default_mysql_uri)
+    raw_db_url = os.getenv('DATABASE_URL')
+    if raw_db_url:
+        if raw_db_url.startswith('postgres://'):
+            raw_db_url = raw_db_url.replace('postgres://', 'postgresql://', 1)
+        elif raw_db_url.startswith('mysql://') and not raw_db_url.startswith('mysql+pymysql://'):
+            raw_db_url = raw_db_url.replace('mysql://', 'mysql+pymysql://', 1)
+        SQLALCHEMY_DATABASE_URI = raw_db_url
+    else:
+        SQLALCHEMY_DATABASE_URI = default_mysql_uri
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_recycle": 280,

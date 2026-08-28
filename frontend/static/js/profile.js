@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const res = await window.api.get('/profile');
             currentProfile = res.data;
             populateForm(currentProfile);
+            renderResumeSection(currentProfile);
             renderSkills(currentProfile.skills || []);
             renderProjects(currentProfile.projects || []);
             renderCertifications(currentProfile.certifications || []);
@@ -31,6 +32,101 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (err) {
             console.error('Failed to load profile:', err);
         }
+    }
+
+    // ==========================================
+    // Attached Resume Management
+    // ==========================================
+    const resumeStatusBadge = document.getElementById('resumeStatusBadge');
+    const resumeAttachedState = document.getElementById('resumeAttachedState');
+    const resumeUploadState = document.getElementById('resumeUploadState');
+    const profileResumeFileName = document.getElementById('profileResumeFileName');
+    const profileResumeUploadedAt = document.getElementById('profileResumeUploadedAt');
+    const profileResumeFileInput = document.getElementById('profileResumeFileInput');
+    const profileResumeReplaceInput = document.getElementById('profileResumeReplaceInput');
+    const btnDeleteProfileResume = document.getElementById('btnDeleteProfileResume');
+
+    function renderResumeSection(p) {
+        if (!resumeAttachedState || !resumeUploadState) return;
+
+        if (p && (p.has_uploaded_resume || p.resume_filename)) {
+            resumeAttachedState.style.display = 'block';
+            resumeUploadState.style.display = 'none';
+            if (profileResumeFileName) {
+                profileResumeFileName.textContent = p.resume_original_name || p.resume_filename;
+            }
+            if (profileResumeUploadedAt) {
+                profileResumeUploadedAt.textContent = p.resume_uploaded_at ? `Uploaded on ${p.resume_uploaded_at}` : 'Active Resume';
+            }
+            if (resumeStatusBadge) {
+                resumeStatusBadge.className = 'badge badge-emerald-subtle py-1 px-2.5 fw-bold';
+                resumeStatusBadge.textContent = 'Attached';
+            }
+        } else {
+            resumeAttachedState.style.display = 'none';
+            resumeUploadState.style.display = 'block';
+            if (resumeStatusBadge) {
+                resumeStatusBadge.className = 'badge bg-surface-elevated text-secondary py-1 px-2.5 fw-bold';
+                resumeStatusBadge.textContent = 'No Resume';
+            }
+        }
+    }
+
+    async function handleResumeUpload(file) {
+        if (!file) return;
+
+        const allowedExtensions = ['pdf', 'doc', 'docx'];
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(ext)) {
+            window.api.showToast('Invalid file format. Please upload a PDF or DOCX resume.', 'danger');
+            return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+            window.api.showToast('File size exceeds 10MB limit.', 'danger');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('resume', file);
+
+        try {
+            window.api.showToast('Uploading resume file...', 'info');
+            const res = await window.api.upload('/profile/resume', formData);
+            window.api.showToast('Resume uploaded and attached successfully!', 'success');
+            await loadProfile();
+        } catch (err) {
+            // Error toast handled by api.upload
+        }
+    }
+
+    if (profileResumeFileInput) {
+        profileResumeFileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                handleResumeUpload(e.target.files[0]);
+                e.target.value = '';
+            }
+        });
+    }
+
+    if (profileResumeReplaceInput) {
+        profileResumeReplaceInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                handleResumeUpload(e.target.files[0]);
+                e.target.value = '';
+            }
+        });
+    }
+
+    if (btnDeleteProfileResume) {
+        btnDeleteProfileResume.addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to remove your attached resume?')) return;
+            try {
+                await window.api.delete('/profile/resume');
+                window.api.showToast('Attached resume removed.', 'info');
+                await loadProfile();
+            } catch (err) {}
+        });
     }
 
     function populateForm(p) {

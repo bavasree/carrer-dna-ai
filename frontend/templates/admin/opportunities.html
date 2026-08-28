@@ -24,16 +24,16 @@
     </div>
 
     <!-- Filter & Action Controls -->
-    <div class="card bg-surface-card p-3 mb-4 border border-subtle shadow-sm">
-        <div class="row g-2 align-items-center justify-content-between">
+    <div class="card bg-surface-card p-4 mb-4 border border-subtle shadow-md">
+        <div class="row g-3 align-items-center justify-content-between">
             <div class="col-md-3">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-surface-elevated text-secondary border-subtle"><i class="bi bi-search"></i></span>
-                    <input type="text" class="form-control text-light" id="adminOppSearch" placeholder="Search title or company...">
+                <div class="input-group">
+                    <span class="input-group-text bg-surface-elevated text-secondary border-subtle px-3"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control text-white" id="adminOppSearch" placeholder="Search title or company...">
                 </div>
             </div>
             <div class="col-6 col-md-2">
-                <select class="form-select form-select-sm" id="adminOppStatusFilter">
+                <select class="form-select text-white" id="adminOppStatusFilter">
                     <option value="all">All Statuses</option>
                     <option value="active" selected>Active</option>
                     <option value="expired">Expired Deadlines</option>
@@ -42,7 +42,7 @@
                 </select>
             </div>
             <div class="col-6 col-md-2">
-                <select class="form-select form-select-sm" id="adminOppTypeFilter">
+                <select class="form-select text-white" id="adminOppTypeFilter">
                     <option value="all">All Types</option>
                     <option value="hackathon">Hackathon</option>
                     <option value="internship">Internship</option>

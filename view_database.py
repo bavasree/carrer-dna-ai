@@ -1,4 +1,11 @@
 import pymysql
+import sys
+
+if sys.stdout.encoding != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 def view_db():
     conn = pymysql.connect(

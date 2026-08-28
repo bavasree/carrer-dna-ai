@@ -1,5 +1,6 @@
 /**
  * AI Resume Builder & PDF Live Preview Module
+ * Professional ATS-compliant Resume Layout & Real-Time Sync
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -48,10 +49,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!paperPreview || !currentResume) return;
 
         const content = currentResume.content_data || {};
-        const name = content.full_name || 'Your Full Name';
+        const name = content.full_name || 'Student Name';
         const headline = content.headline || 'Software Engineer';
         const email = content.email || 'student@careerdna.ai';
-        const phone = content.phone || '+1 (555) 000-0000';
+        const phone = content.phone || '';
         const github = content.github_url || '';
         const linkedin = content.linkedin_url || '';
 
@@ -63,57 +64,70 @@ document.addEventListener('DOMContentLoaded', async () => {
         const certs = content.certifications || [];
 
         if (selectedTemplate === 'classic') {
-            // Classic ATS Single Column Template
+            // Classic ATS Single Column Template (Traditional Serif)
             paperPreview.className = 'resume-paper font-serif';
             paperPreview.innerHTML = `
+                <!-- Header -->
                 <div class="text-center pb-2 mb-3 border-bottom border-dark">
-                    <h2 class="text-dark fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: 0.05em; border: none; margin: 0; padding: 0;">${name.toUpperCase()}</h2>
-                    <div class="small text-dark mt-1">
-                        ${email} &bull; ${phone} ${github ? `&bull; <a href="${github}" target="_blank" class="text-dark">GitHub</a>` : ''} ${linkedin ? `&bull; <a href="${linkedin}" target="_blank" class="text-dark">LinkedIn</a>` : ''}
+                    <h2 class="fw-bold mb-1" style="font-size: 1.55rem; letter-spacing: 0.05em; color: #000000; margin: 0; padding: 0;">${name.toUpperCase()}</h2>
+                    <div class="small mt-1" style="color: #1F2937; font-size: 0.88rem;">
+                        ${[
+                            email ? `<span>${email}</span>` : '',
+                            phone ? `<span>${phone}</span>` : '',
+                            linkedin ? `<a href="${linkedin}" target="_blank" style="color: #000000; text-decoration: underline;">LinkedIn</a>` : '',
+                            github ? `<a href="${github}" target="_blank" style="color: #000000; text-decoration: underline;">GitHub</a>` : ''
+                        ].filter(Boolean).join(' &bull; ')}
                     </div>
                 </div>
 
+                <!-- Objective -->
                 ${objective ? `
                     <div class="mb-3">
-                        <h6 class="fw-bold text-dark text-uppercase border-bottom border-dark pb-1 mb-2" style="font-size: 0.85rem; letter-spacing: 0.05em;">Professional Objective</h6>
-                        <p class="small text-dark mb-0 leading-relaxed">${objective}</p>
+                        <div class="resume-section-title" style="font-size: 0.88rem; font-weight: 700; text-transform: uppercase; border-bottom: 1.5px solid #000000; padding-bottom: 2px; margin-bottom: 6px; color: #000000;">OBJECTIVE</div>
+                        <p class="small mb-0" style="color: #111827; font-size: 0.88rem; line-height: 1.5;">${objective}</p>
                     </div>
                 ` : ''}
 
+                <!-- Education -->
                 <div class="mb-3">
-                    <h6 class="fw-bold text-dark text-uppercase border-bottom border-dark pb-1 mb-2" style="font-size: 0.85rem; letter-spacing: 0.05em;">Education</h6>
-                    <div class="d-flex justify-content-between text-dark small fw-bold">
-                        <span>${content.college_name || 'University'} — ${content.degree || 'B.S.'} in ${content.branch || 'Computer Science'}</span>
-                        <span>${content.graduation_year || '2026'}</span>
+                    <div class="resume-section-title" style="font-size: 0.88rem; font-weight: 700; text-transform: uppercase; border-bottom: 1.5px solid #000000; padding-bottom: 2px; margin-bottom: 6px; color: #000000;">EDUCATION</div>
+                    <div class="d-flex justify-content-between align-items-start small" style="font-size: 0.88rem;">
+                        <div>
+                            <span class="fw-bold" style="color: #000000;">${content.college_name || 'University'}</span> — <span>${content.degree || 'B.Tech'} in ${content.branch || 'Computer Science'}</span>
+                        </div>
+                        <div class="text-end fst-italic" style="color: #374151; white-space: nowrap;">
+                            ${content.graduation_year || '2026'}${content.cgpa ? ` | CGPA: ${content.cgpa}/10.0` : ''}
+                        </div>
                     </div>
-                    ${content.cgpa ? `<div class="small text-muted">Cumulative CGPA: ${content.cgpa}/10.0</div>` : ''}
                 </div>
 
+                <!-- Technical Skills -->
                 ${skills.length > 0 ? `
                     <div class="mb-3">
-                        <h6 class="fw-bold text-dark text-uppercase border-bottom border-dark pb-1 mb-2" style="font-size: 0.85rem; letter-spacing: 0.05em;">Technical Competencies</h6>
-                        <p class="small text-dark mb-0">${skills.join(' • ')}</p>
+                        <div class="resume-section-title" style="font-size: 0.88rem; font-weight: 700; text-transform: uppercase; border-bottom: 1.5px solid #000000; padding-bottom: 2px; margin-bottom: 6px; color: #000000;">TECHNICAL SKILLS</div>
+                        <p class="small mb-0" style="color: #111827; font-size: 0.88rem; line-height: 1.5;">${skills.join(' • ')}</p>
                     </div>
                 ` : ''}
 
+                <!-- Projects -->
                 ${projects.length > 0 ? `
                     <div class="mb-3">
-                        <h6 class="fw-bold text-dark text-uppercase border-bottom border-dark pb-1 mb-2" style="font-size: 0.85rem; letter-spacing: 0.05em;">Technical Projects</h6>
+                        <div class="resume-section-title" style="font-size: 0.88rem; font-weight: 700; text-transform: uppercase; border-bottom: 1.5px solid #000000; padding-bottom: 2px; margin-bottom: 6px; color: #000000;">PROJECTS</div>
                         ${projects.map(p => {
                             const descLines = (p.description || '').split('\n').map(l => l.trim()).filter(Boolean);
                             return `
-                                <div class="mb-2">
-                                    <div class="d-flex justify-content-between text-dark small">
-                                        <span class="fw-bold">${p.title}</span>
-                                        <span class="fst-italic text-muted">${p.tech_stack || ''}</span>
+                                <div class="mb-2.5">
+                                    <div class="d-flex justify-content-between align-items-baseline small" style="font-size: 0.88rem;">
+                                        <span class="fw-bold" style="color: #000000;">${p.title}</span>
+                                        <span class="fst-italic" style="color: #4B5563; font-size: 0.82rem;">${p.tech_stack || ''}</span>
                                     </div>
-                                    <div class="ps-2">
-                                        ${descLines.map(l => `<p class="small text-dark mb-0 leading-tight">${l.startsWith('•') ? l : '• ' + l}</p>`).join('')}
+                                    <div class="ps-2 mt-0.5">
+                                        ${descLines.map(l => `<p class="small mb-0" style="color: #1F2937; font-size: 0.85rem; line-height: 1.45;">${l.startsWith('•') ? l : '• ' + l}</p>`).join('')}
                                     </div>
-                                    ${p.github_url || p.live_url ? `
-                                        <div class="small text-muted mt-1">
-                                            ${p.github_url ? `<a href="${p.github_url}" target="_blank" class="text-dark me-2">Code</a>` : ''}
-                                            ${p.live_url ? `<a href="${p.live_url}" target="_blank" class="text-dark">Live Demo</a>` : ''}
+                                    ${(p.github_url || p.live_url) ? `
+                                        <div class="small mt-1 ps-2" style="font-size: 0.80rem; color: #4B5563;">
+                                            ${p.github_url ? `<a href="${p.github_url}" target="_blank" style="color: #000000; text-decoration: underline; margin-right: 12px;">Repository: ${p.github_url}</a>` : ''}
+                                            ${p.live_url ? `<a href="${p.live_url}" target="_blank" style="color: #000000; text-decoration: underline;">Live Demo: ${p.live_url}</a>` : ''}
                                         </div>
                                     ` : ''}
                                 </div>
@@ -122,75 +136,86 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 ` : ''}
 
+                <!-- Certifications -->
                 ${certs.length > 0 ? `
                     <div>
-                        <h6 class="fw-bold text-dark text-uppercase border-bottom border-dark pb-1 mb-2" style="font-size: 0.85rem; letter-spacing: 0.05em;">Certifications & Accreditations</h6>
-                        <ul class="small text-dark ps-3 mb-0">
-                            ${certs.map(c => `<li><b>${c.title}</b> — ${c.issuing_organization || 'Accredited'}</li>`).join('')}
+                        <div class="resume-section-title" style="font-size: 0.88rem; font-weight: 700; text-transform: uppercase; border-bottom: 1.5px solid #000000; padding-bottom: 2px; margin-bottom: 6px; color: #000000;">CERTIFICATIONS</div>
+                        <ul class="small ps-3 mb-0" style="color: #111827; font-size: 0.88rem; line-height: 1.5;">
+                            ${certs.map(c => `<li><b>${c.title}</b>${c.issuing_organization ? ` — ${c.issuing_organization}` : ''}</li>`).join('')}
                         </ul>
                     </div>
                 ` : ''}
             `;
         } else {
-            // Modern Tech Template
+            // Modern Tech Template (Deep Navy & Clean Blue Accents)
             paperPreview.className = 'resume-paper';
             paperPreview.innerHTML = `
-                <div class="resume-header mb-3 pb-2" style="border-bottom: 2px solid #1E3A8A;">
-                    <h2 class="fw-bold mb-0" style="font-size: 1.55rem; color: #1E3A8A; letter-spacing: -0.01em; border: none; margin: 0; padding: 0;">${name.toUpperCase()}</h2>
-                    <div class="fw-semibold small mb-1" style="color: #2563EB;">${headline}</div>
-                    <div class="small text-muted">
-                        ${email} &bull; ${phone}
-                        ${github ? `&bull; <a href="${github}" target="_blank" style="color: #1E3A8A; font-weight: 500;"><i class="bi bi-github me-1"></i>GitHub</a>` : ''}
-                        ${linkedin ? `&bull; <a href="${linkedin}" target="_blank" style="color: #1E3A8A; font-weight: 500;"><i class="bi bi-linkedin me-1"></i>LinkedIn</a>` : ''}
+                <!-- Header -->
+                <div class="resume-header mb-3 pb-2.5" style="border-bottom: 2px solid #1E3A8A;">
+                    <h2 class="fw-bold mb-0" style="font-size: 1.65rem; color: #1E3A8A; letter-spacing: -0.01em; margin: 0; padding: 0;">${name.toUpperCase()}</h2>
+                    <div class="fw-semibold small mt-0.5 mb-1" style="color: #2563EB; font-size: 0.94rem;">${headline}</div>
+                    <div class="small" style="color: #475569; font-size: 0.86rem;">
+                        ${[
+                            email ? `<span><i class="bi bi-envelope me-1"></i>${email}</span>` : '',
+                            phone ? `<span><i class="bi bi-telephone me-1"></i>${phone}</span>` : '',
+                            github ? `<a href="${github}" target="_blank" style="color: #1E3A8A; font-weight: 600;"><i class="bi bi-github me-1"></i>GitHub</a>` : '',
+                            linkedin ? `<a href="${linkedin}" target="_blank" style="color: #1E3A8A; font-weight: 600;"><i class="bi bi-linkedin me-1"></i>LinkedIn</a>` : ''
+                        ].filter(Boolean).join(' &bull; ')}
                     </div>
                 </div>
 
+                <!-- Professional Summary -->
                 ${objective ? `
                     <div class="mb-3">
-                        <h6 class="fw-bold text-uppercase pb-1 mb-2" style="color: #1E3A8A; border-bottom: 1.5px solid #E2E8F0; font-size: 0.85rem; letter-spacing: 0.05em;">Professional Summary</h6>
-                        <p class="small text-dark mb-0 leading-relaxed">${objective}</p>
+                        <div class="resume-section-title" style="font-size: 0.90rem; font-weight: 750; text-transform: uppercase; color: #1E3A8A; border-bottom: 1.5px solid #E2E8F0; padding-bottom: 3px; margin-bottom: 6px; letter-spacing: 0.04em;">PROFESSIONAL SUMMARY</div>
+                        <p class="small mb-0" style="color: #334155; font-size: 0.88rem; line-height: 1.55;">${objective}</p>
                     </div>
                 ` : ''}
 
+                <!-- Education -->
                 <div class="mb-3">
-                    <h6 class="fw-bold text-uppercase pb-1 mb-2" style="color: #1E3A8A; border-bottom: 1.5px solid #E2E8F0; font-size: 0.85rem; letter-spacing: 0.05em;">Education</h6>
-                    <div class="d-flex justify-content-between text-dark small fw-bold">
-                        <span style="color: #0F172A;">${content.degree || 'B.Tech'} in ${content.branch || 'Computer Science'}</span>
-                        <span class="text-muted">Graduation: ${content.graduation_year || '2026'}</span>
-                    </div>
-                    <div class="d-flex justify-content-between small text-muted">
-                        <span>${content.college_name || 'University'}</span>
-                        <span>${content.cgpa ? `Cumulative CGPA: ${content.cgpa}/10.0` : ''}</span>
+                    <div class="resume-section-title" style="font-size: 0.90rem; font-weight: 750; text-transform: uppercase; color: #1E3A8A; border-bottom: 1.5px solid #E2E8F0; padding-bottom: 3px; margin-bottom: 6px; letter-spacing: 0.04em;">EDUCATION</div>
+                    <div class="d-flex justify-content-between align-items-start small" style="font-size: 0.88rem;">
+                        <div>
+                            <div class="fw-bold" style="color: #0F172A;">${content.degree || 'B.Tech'} in ${content.branch || 'Computer Science'}</div>
+                            <div style="color: #475569;">${content.college_name || 'University'}</div>
+                        </div>
+                        <div class="text-end" style="color: #475569;">
+                            <div class="fw-bold" style="color: #0F172A;">Graduation: ${content.graduation_year || '2026'}</div>
+                            <div>${content.cgpa ? `Cumulative CGPA: ${content.cgpa}/10.0` : ''}</div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Technical Competencies -->
                 ${skills.length > 0 ? `
                     <div class="mb-3">
-                        <h6 class="fw-bold text-uppercase pb-1 mb-2" style="color: #1E3A8A; border-bottom: 1.5px solid #E2E8F0; font-size: 0.85rem; letter-spacing: 0.05em;">Technical Competencies</h6>
-                        <div class="d-flex flex-wrap gap-1 mt-1">
-                            ${skills.map(s => `<span class="badge bg-light text-dark border p-1" style="font-size: 0.72rem; font-weight: 500;">${s}</span>`).join('')}
-                        </div>
+                        <div class="resume-section-title" style="font-size: 0.90rem; font-weight: 750; text-transform: uppercase; color: #1E3A8A; border-bottom: 1.5px solid #E2E8F0; padding-bottom: 3px; margin-bottom: 6px; letter-spacing: 0.04em;">TECHNICAL COMPETENCIES</div>
+                        <p class="small mb-0" style="color: #1E293B; font-size: 0.88rem; line-height: 1.55;">
+                            <b>Core Technologies:</b> ${skills.join(' • ')}
+                        </p>
                     </div>
                 ` : ''}
 
+                <!-- Projects -->
                 ${projects.length > 0 ? `
                     <div class="mb-3">
-                        <h6 class="fw-bold text-uppercase pb-1 mb-2" style="color: #1E3A8A; border-bottom: 1.5px solid #E2E8F0; font-size: 0.85rem; letter-spacing: 0.05em;">Technical & Capstone Projects</h6>
+                        <div class="resume-section-title" style="font-size: 0.90rem; font-weight: 750; text-transform: uppercase; color: #1E3A8A; border-bottom: 1.5px solid #E2E8F0; padding-bottom: 3px; margin-bottom: 6px; letter-spacing: 0.04em;">TECHNICAL & CAPSTONE PROJECTS</div>
                         ${projects.map(p => {
                             const descLines = (p.description || '').split('\n').map(l => l.trim()).filter(Boolean);
                             return `
-                                <div class="mb-2">
-                                    <div class="d-flex justify-content-between text-dark small">
+                                <div class="mb-2.5">
+                                    <div class="d-flex justify-content-between align-items-baseline small" style="font-size: 0.88rem;">
                                         <span class="fw-bold" style="color: #0F172A;">${p.title}</span>
-                                        <span class="text-muted fst-italic" style="font-size: 0.78rem;">${p.tech_stack || ''}</span>
+                                        <span class="fst-italic" style="color: #64748B; font-size: 0.82rem;">${p.tech_stack || ''}</span>
                                     </div>
-                                    <div class="ps-2">
-                                        ${descLines.map(l => `<p class="small text-dark mb-0 leading-tight" style="color: #334155;">${l.startsWith('•') ? l : '• ' + l}</p>`).join('')}
+                                    <div class="ps-2 mt-0.5">
+                                        ${descLines.map(l => `<p class="small mb-0" style="color: #334155; font-size: 0.86rem; line-height: 1.45;">${l.startsWith('•') ? l : '• ' + l}</p>`).join('')}
                                     </div>
-                                    ${p.github_url || p.live_url ? `
-                                        <div class="small text-muted mt-1">
-                                            ${p.github_url ? `<a href="${p.github_url}" target="_blank" class="me-2" style="color: #2563EB;">Code Repository</a>` : ''}
-                                            ${p.live_url ? `<a href="${p.live_url}" target="_blank" style="color: #2563EB;">Live Demo</a>` : ''}
+                                    ${(p.github_url || p.live_url) ? `
+                                        <div class="small mt-1 ps-2" style="font-size: 0.80rem;">
+                                            ${p.github_url ? `<a href="${p.github_url}" target="_blank" style="color: #2563EB; font-weight: 500; margin-right: 12px;"><i class="bi bi-github me-1"></i>Repository</a>` : ''}
+                                            ${p.live_url ? `<a href="${p.live_url}" target="_blank" style="color: #2563EB; font-weight: 500;"><i class="bi bi-box-arrow-up-right me-1"></i>Live Demo</a>` : ''}
                                         </div>
                                     ` : ''}
                                 </div>
@@ -199,11 +224,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 ` : ''}
 
+                <!-- Certifications -->
                 ${certs.length > 0 ? `
                     <div>
-                        <h6 class="fw-bold text-uppercase pb-1 mb-2" style="color: #1E3A8A; border-bottom: 1.5px solid #E2E8F0; font-size: 0.85rem; letter-spacing: 0.05em;">Certifications & Awards</h6>
-                        <ul class="small text-dark ps-3 mb-0">
-                            ${certs.map(c => `<li><b>${c.title}</b> — ${c.issuing_organization || 'Accredited'}</li>`).join('')}
+                        <div class="resume-section-title" style="font-size: 0.90rem; font-weight: 750; text-transform: uppercase; color: #1E3A8A; border-bottom: 1.5px solid #E2E8F0; padding-bottom: 3px; margin-bottom: 6px; letter-spacing: 0.04em;">CERTIFICATIONS & ACCREDITATIONS</div>
+                        <ul class="small ps-3 mb-0" style="color: #1E293B; font-size: 0.88rem; line-height: 1.5;">
+                            ${certs.map(c => `<li><b>${c.title}</b>${c.issuing_organization ? ` — ${c.issuing_organization}` : ''}</li>`).join('')}
                         </ul>
                     </div>
                 ` : ''}
@@ -360,7 +386,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             downloadPdfBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating PDF...';
 
             try {
-                const blob = await window.api.get(`/resume/download-pdf?template=${selectedTemplate}`, { responseType: 'blob' });
+                const blob = await window.api.get(`/resume/download-pdf?template=${selectedTemplate}&force_generate=true`, { responseType: 'blob' });
                 const downloadUrl = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;

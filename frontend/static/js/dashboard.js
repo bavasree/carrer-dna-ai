@@ -104,8 +104,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (activeHackathons.length === 0) {
                 container.innerHTML = `
-                    <div class="col-12 py-3 text-center text-muted small">
-                        <i class="bi bi-info-circle me-1"></i>No upcoming hackathons found right now. Check back soon!
+                    <div class="col-12 py-4 text-center text-muted small">
+                        <i class="bi bi-info-circle me-1.5"></i>No upcoming hackathons found right now. Check back soon!
                     </div>
                 `;
                 return;
@@ -118,32 +118,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const diffDays = Math.ceil((new Date(h.deadline) - now) / (1000 * 60 * 60 * 24));
                     if (diffDays > 0) {
                         daysLeft = `${diffDays} days left`;
-                        if (diffDays <= 7) closingBadge = '<span class="badge bg-danger-subtle border border-danger text-light py-0 px-2 ms-1">Closing Soon</span>';
+                        if (diffDays <= 7) closingBadge = '<span class="badge bg-danger-subtle border border-danger text-light py-0.5 px-2 ms-1">Closing Soon</span>';
                     } else if (diffDays === 0) {
                         daysLeft = 'Ends Today';
-                        closingBadge = '<span class="badge bg-danger-subtle border border-danger text-light py-0 px-2 ms-1">Ends Today</span>';
+                        closingBadge = '<span class="badge bg-danger-subtle border border-danger text-light py-0.5 px-2 ms-1">Ends Today</span>';
                     }
                 }
 
                 return `
                     <div class="col-md-4">
-                        <div class="p-3 bg-surface-elevated rounded-3 border border-subtle h-100 d-flex flex-column justify-content-between">
+                        <div class="p-3.5 bg-surface-elevated rounded-3 border border-subtle h-100 d-flex flex-column justify-content-between">
                             <div>
                                 <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <span class="badge badge-amber-subtle text-uppercase" style="font-size: 0.68rem;">HACKATHON</span>
-                                    <span class="match-score-badge ${h.match_score >= 80 ? 'match-high' : h.match_score >= 60 ? 'match-mid' : ''}" style="font-size: 0.75rem; padding: 0.15rem 0.45rem;">
+                                    <span class="badge badge-amber-subtle text-uppercase fw-bold" style="font-size: 0.72rem;">HACKATHON</span>
+                                    <span class="match-score-badge ${h.match_score >= 80 ? 'match-high' : h.match_score >= 60 ? 'match-mid' : ''}" style="font-size: 0.82rem; padding: 0.25rem 0.6rem;">
                                         <i class="bi bi-stars"></i> ${h.match_score}%
                                     </span>
                                 </div>
-                                <h6 class="text-light fw-bold mb-1 text-truncate">${h.title}</h6>
-                                <small class="text-muted d-block mb-2"><i class="bi bi-building me-1"></i>${h.company_name}</small>
-                                <p class="text-secondary small mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.8rem;">
+                                <h5 class="text-white fw-bold mb-1 fs-6 text-truncate">${h.title}</h5>
+                                <small class="text-secondary d-block mb-2"><i class="bi bi-building me-1"></i>${h.company_name}</small>
+                                <p class="text-secondary small mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.88rem; line-height: 1.5;">
                                     ${h.description}
                                 </p>
                             </div>
-                            <div class="pt-2 border-top border-subtle d-flex justify-content-between align-items-center mt-2">
-                                <small class="text-warning" style="font-size: 0.75rem;"><i class="bi bi-clock me-1"></i>${daysLeft} ${closingBadge}</small>
-                                <a href="${h.apply_url}" target="_blank" class="btn btn-sm btn-glass py-0 px-2" style="font-size: 0.75rem;">
+                            <div class="pt-2.5 border-top border-subtle d-flex justify-content-between align-items-center mt-2">
+                                <small class="text-warning fw-semibold" style="font-size: 0.82rem;"><i class="bi bi-clock me-1"></i>${daysLeft} ${closingBadge}</small>
+                                <a href="${h.apply_url}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-glass py-1 px-2.5 fw-semibold" style="font-size: 0.82rem;">
                                     Register <i class="bi bi-box-arrow-up-right ms-1"></i>
                                 </a>
                             </div>
@@ -185,20 +185,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 return `
-                    <div class="card bg-surface-card mb-3 p-3">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="card bg-surface-card mb-3 p-3.5 shadow-sm border border-subtle">
+                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2 mb-2">
                             <div>
-                                <span class="badge badge-pill badge-primary-subtle text-uppercase mb-1" style="font-size: 0.7rem;">${opp.opportunity_type}</span>
-                                <h6 class="mb-0 fw-bold text-light">${opp.title}</h6>
+                                <span class="badge badge-primary-subtle text-uppercase mb-1 fw-bold" style="font-size: 0.74rem;">${opp.opportunity_type}</span>
+                                <h5 class="mb-1 fw-bold text-white fs-6">${opp.title}</h5>
                                 <small class="text-secondary"><i class="bi bi-building me-1"></i>${opp.company_name} &bull; <i class="bi bi-geo-alt me-1"></i>${opp.location}</small>
                             </div>
                             <div class="match-score-badge ${opp.match_score >= 80 ? 'match-high' : opp.match_score >= 60 ? 'match-mid' : ''}">
                                 <i class="bi bi-stars"></i> ${opp.match_score}% Match
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top border-subtle">
-                            <small class="text-muted"><i class="bi bi-clock me-1"></i>Deadline: ${deadlineStr}</small>
-                            <a href="/recommendations" class="btn btn-sm btn-glass py-1 px-3">View Details</a>
+                        <div class="d-flex justify-content-between align-items-center mt-2.5 pt-2.5 border-top border-subtle">
+                            <small class="text-secondary"><i class="bi bi-clock me-1 text-info"></i>Deadline: ${deadlineStr}</small>
+                            <a href="/recommendations" class="btn btn-sm btn-glass py-1.5 px-3 fw-semibold">View Details</a>
                         </div>
                     </div>
                 `;
@@ -226,11 +226,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (milestoneList && roadmap.milestones) {
                 const nextMilestones = roadmap.milestones.slice(0, 3);
                 milestoneList.innerHTML = nextMilestones.map(m => `
-                    <li class="list-group-item bg-transparent border-0 px-0 py-2 d-flex align-items-center">
-                        <i class="bi ${m.is_completed ? 'bi-check-circle-fill text-success' : 'bi-circle text-muted'} me-2 fs-5"></i>
+                    <li class="list-group-item bg-transparent border-0 px-0 py-2.5 d-flex align-items-center">
+                        <i class="bi ${m.is_completed ? 'bi-check-circle-fill text-success' : 'bi-circle text-muted'} me-2.5 fs-5"></i>
                         <div class="flex-grow-1">
-                            <div class="fw-semibold text-light" style="font-size: 0.9rem;">${m.title}</div>
-                            <small class="text-muted">STAGE ${m.stage_number}: ${m.stage_name}</small>
+                            <div class="fw-semibold text-white" style="font-size: 0.95rem;">${m.title}</div>
+                            <small class="text-secondary fw-medium">STAGE ${m.stage_number}: ${m.stage_name}</small>
                         </div>
                     </li>
                 `).join('');
