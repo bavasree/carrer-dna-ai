@@ -4,6 +4,8 @@ from ..models import db, User, CareerAnalysis
 from ..services.gemini_service import gemini_service
 from ..utils.response import api_response, error_response
 
+from ..utils.auth_decorators import get_student_profile
+
 analysis_bp = Blueprint('analysis_bp', __name__, url_prefix='/api/career-analysis')
 
 @analysis_bp.route('', methods=['GET'], strict_slashes=False)
@@ -11,11 +13,11 @@ analysis_bp = Blueprint('analysis_bp', __name__, url_prefix='/api/career-analysi
 @jwt_required()
 def get_latest_analysis():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 404)
 
-    latest = CareerAnalysis.query.filter_by(student_id=user.profile.id).order_by(CareerAnalysis.created_at.desc()).first()
+    latest = CareerAnalysis.query.filter_by(student_id=profile.id).order_by(CareerAnalysis.created_at.desc()).first()
     if not latest:
         return api_response(data=None, message="No analysis generated yet. Run your first AI Career Analysis!")
 
@@ -26,11 +28,10 @@ def get_latest_analysis():
 @jwt_required()
 def run_career_analysis():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required to run AI analysis", 400)
 
-    profile = user.profile
     profile_data = profile.to_dict()
 
     # Call Gemini service (with automatic heuristic fallback)
@@ -61,14 +62,14 @@ def run_career_analysis():
 @jwt_required()
 def run_skill_gap_analysis():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
     data = request.get_json() or {}
-    target_role = data.get('target_role') or user.profile.target_role or user.profile.career_goal or 'Software Engineer'
+    target_role = data.get('target_role') or profile.target_role or profile.career_goal or 'Software Engineer'
 
-    profile_data = user.profile.to_dict()
+    profile_data = profile.to_dict()
     result = gemini_service.analyze_skill_gap(profile_data, target_role)
 
     return api_response(data=result, message="Skill gap analysis completed.")

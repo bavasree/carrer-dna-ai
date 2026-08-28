@@ -9,19 +9,10 @@ from ..utils.validators import validate_profile
 
 profile_bp = Blueprint('profile_bp', __name__, url_prefix='/api/profile')
 
+from ..utils.auth_decorators import get_student_profile
+
 def _get_student_profile(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return None
-    if not user.profile:
-        # Auto-create empty profile
-        profile = StudentProfile(
-            user_id=user.id,
-            full_name=user.email.split('@')[0]
-        )
-        db.session.add(profile)
-        db.session.commit()
-    return user.profile
+    return get_student_profile(user_id)
 
 
 @profile_bp.route('', methods=['GET'], strict_slashes=False)

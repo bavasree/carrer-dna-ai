@@ -5,6 +5,8 @@ from ..models import db, User, CareerRoadmap, RoadmapMilestone
 from ..services.gemini_service import gemini_service
 from ..utils.response import api_response, error_response
 
+from ..utils.auth_decorators import get_student_profile
+
 roadmap_bp = Blueprint('roadmap_bp', __name__, url_prefix='/api/roadmap')
 
 @roadmap_bp.route('', methods=['GET'], strict_slashes=False)
@@ -12,11 +14,10 @@ roadmap_bp = Blueprint('roadmap_bp', __name__, url_prefix='/api/roadmap')
 @jwt_required()
 def get_roadmap():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
-    profile = user.profile
     roadmap = CareerRoadmap.query.filter_by(student_id=profile.id).order_by(CareerRoadmap.created_at.desc()).first()
 
     if not roadmap:
@@ -34,14 +35,14 @@ def get_roadmap():
 @jwt_required()
 def generate_custom_roadmap():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
     data = request.get_json() or {}
-    target_role = data.get('target_role') or user.profile.target_role or user.profile.career_goal or 'Software Engineer'
+    target_role = data.get('target_role') or profile.target_role or profile.career_goal or 'Software Engineer'
 
-    roadmap = _create_new_roadmap(user.profile, target_role)
+    roadmap = _create_new_roadmap(profile, target_role)
     return api_response(data=roadmap.to_dict(), message=f"Personalized Career Roadmap for {target_role} generated!", status_code=201)
 
 
@@ -80,12 +81,12 @@ def _create_new_roadmap(profile, target_role):
 @jwt_required()
 def update_milestone(milestone_id):
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
     milestone = RoadmapMilestone.query.get(milestone_id)
-    if not milestone or milestone.roadmap.student_id != user.profile.id:
+    if not milestone or milestone.roadmap.student_id != profile.id:
         return error_response("Milestone not found or access denied.", 404)
 
     data = request.get_json() or {}

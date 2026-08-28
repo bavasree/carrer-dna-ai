@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import db, User, Application, Opportunity
 from ..utils.response import api_response, error_response
+from ..utils.auth_decorators import get_student_profile
 
 application_bp = Blueprint('application_bp', __name__, url_prefix='/api/applications')
 
@@ -201,16 +202,16 @@ def get_workflows():
 @jwt_required()
 def list_applications():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
     # Trigger automatic status updates & synchronization
-    auto_update_application_statuses(user.profile.id)
+    auto_update_application_statuses(profile.id)
 
     # Opportunity type filter
     filter_type = request.args.get('type')
-    query = Application.query.filter_by(student_id=user.profile.id)
+    query = Application.query.filter_by(student_id=profile.id)
     if filter_type and filter_type != 'all':
         query = query.filter_by(opportunity_type=filter_type)
 
@@ -275,8 +276,8 @@ def list_applications():
 @jwt_required()
 def create_application():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
     data = request.get_json() or {}
@@ -289,7 +290,7 @@ def create_application():
     opp_id = data.get('opportunity_id')
     opp_deadline = None
     if opp_id:
-        existing = Application.query.filter_by(student_id=user.profile.id, opportunity_id=opp_id).first()
+        existing = Application.query.filter_by(student_id=profile.id, opportunity_id=opp_id).first()
         if existing:
             return error_response(
                 f"You have already registered / applied for this opportunity! Current stage: {existing.status.replace('_', ' ').title()}.",
@@ -374,11 +375,9 @@ def apply_for_opportunity():
     - Records detailed metadata in database and synchronizes with Application Tracker
     """
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required to register or apply for opportunities.", 400)
-
-    profile = user.profile
 
     # Determine if request is multipart form data or JSON
     if request.is_json:
@@ -641,11 +640,11 @@ def apply_for_opportunity():
 def get_application_detail(app_id):
     """Retrieve full details of a specific student application including submitted form data."""
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
-    app_entry = Application.query.filter_by(id=app_id, student_id=user.profile.id).first()
+    app_entry = Application.query.filter_by(id=app_id, student_id=profile.id).first()
     if not app_entry:
         return error_response("Application not found", 404)
 
@@ -659,11 +658,11 @@ def get_application_detail(app_id):
 @jwt_required()
 def update_application(app_id):
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
-    app_entry = Application.query.filter_by(id=app_id, student_id=user.profile.id).first()
+    app_entry = Application.query.filter_by(id=app_id, student_id=profile.id).first()
     if not app_entry:
         return error_response("Application not found", 404)
 
@@ -716,11 +715,11 @@ def update_application(app_id):
 @jwt_required()
 def delete_application(app_id):
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
-    app_entry = Application.query.filter_by(id=app_id, student_id=user.profile.id).first()
+    app_entry = Application.query.filter_by(id=app_id, student_id=profile.id).first()
     if not app_entry:
         return error_response("Application not found", 404)
 
@@ -733,14 +732,14 @@ def delete_application(app_id):
 @jwt_required()
 def get_application_stats():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
     # Auto sync before statistics calculation
-    auto_update_application_statuses(user.profile.id)
+    auto_update_application_statuses(profile.id)
 
-    apps = Application.query.filter_by(student_id=user.profile.id).all()
+    apps = Application.query.filter_by(student_id=profile.id).all()
     total = len(apps)
 
     status_counts = {

@@ -52,16 +52,18 @@ def _get_or_create_resume(profile):
     return resume
 
 
+from ..utils.auth_decorators import get_student_profile
+
 @resume_bp.route('', methods=['GET'], strict_slashes=False)
 @resume_bp.route('/', methods=['GET'], strict_slashes=False)
 @jwt_required()
 def get_resume():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
-    resume = _get_or_create_resume(user.profile)
+    resume = _get_or_create_resume(profile)
     return api_response(data=resume.to_dict(), message="Resume loaded successfully.")
 
 
@@ -70,11 +72,11 @@ def get_resume():
 @jwt_required()
 def save_resume():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
-    resume = _get_or_create_resume(user.profile)
+    resume = _get_or_create_resume(profile)
     data = request.get_json() or {}
 
     if 'title' in data: resume.title = data['title']
@@ -91,8 +93,8 @@ def save_resume():
 @jwt_required()
 def ai_improve_section():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
     data = request.get_json() or {}
@@ -101,11 +103,11 @@ def ai_improve_section():
     context = data.get('context', {})
 
     if not text_content:
-        text_content = user.profile.bio or "Software engineer student with experience in web applications."
+        text_content = profile.bio or "Software engineer student with experience in web applications."
 
-    context['target_role'] = user.profile.target_role or 'Software Engineer'
-    context['degree'] = user.profile.degree
-    context['branch'] = user.profile.branch
+    context['target_role'] = profile.target_role or 'Software Engineer'
+    context['degree'] = profile.degree
+    context['branch'] = profile.branch
 
     result = gemini_service.improve_resume_section(section_type, text_content, context)
     return api_response(data=result, message="Text improved with AI.")
@@ -115,11 +117,11 @@ def ai_improve_section():
 @jwt_required()
 def ai_score_ats():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
-    resume = _get_or_create_resume(user.profile)
+    resume = _get_or_create_resume(profile)
     data = request.get_json() or {}
 
     # Capture any live modifications sent from the editor
@@ -128,7 +130,7 @@ def ai_score_ats():
     if 'skills_summary' in data and data['skills_summary']:
         resume.skills_summary = data['skills_summary']
 
-    target_role = data.get('target_role') or user.profile.target_role or user.profile.career_goal or 'Software Engineer'
+    target_role = data.get('target_role') or profile.target_role or profile.career_goal or 'Software Engineer'
 
     resume_payload = {
         "title": resume.title,

@@ -5,6 +5,8 @@ from ..services.recommendation_engine import recommendation_engine
 from ..services.gemini_service import gemini_service
 from ..utils.response import api_response, error_response
 
+from ..utils.auth_decorators import get_student_profile
+
 recommendation_bp = Blueprint('recommendation_bp', __name__, url_prefix='/api/recommendations')
 
 @recommendation_bp.route('', methods=['GET'], strict_slashes=False)
@@ -12,11 +14,7 @@ recommendation_bp = Blueprint('recommendation_bp', __name__, url_prefix='/api/re
 @jwt_required(optional=True)
 def list_recommendations():
     user_id = get_jwt_identity()
-    profile = None
-    if user_id:
-        user = User.query.get(user_id)
-        if user:
-            profile = user.profile
+    profile = get_student_profile(user_id) if user_id else None
 
     filters = {
         'type': request.args.get('type'),
@@ -58,10 +56,10 @@ def get_opportunity_details(opp_id):
     match_info = {}
 
     if user_id:
-        user = User.query.get(user_id)
-        if user and user.profile:
-            student_id = user.profile.id
-            match_info = gemini_service.calculate_match_score(user.profile.to_dict(), opp.to_dict(student_id=student_id))
+        profile = get_student_profile(user_id)
+        if profile:
+            student_id = profile.id
+            match_info = gemini_service.calculate_match_score(profile.to_dict(), opp.to_dict(student_id=student_id))
 
     opp_data = opp.to_dict(student_id=student_id)
     opp_data.update(match_info)
@@ -73,17 +71,17 @@ def get_opportunity_details(opp_id):
 @jwt_required()
 def save_opportunity(opp_id):
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
     opp = Opportunity.query.get(opp_id)
     if not opp:
         return error_response("Opportunity not found", 404)
 
-    existing = SavedOpportunity.query.filter_by(student_id=user.profile.id, opportunity_id=opp.id).first()
+    existing = SavedOpportunity.query.filter_by(student_id=profile.id, opportunity_id=opp.id).first()
     if not existing:
-        saved = SavedOpportunity(student_id=user.profile.id, opportunity_id=opp.id)
+        saved = SavedOpportunity(student_id=profile.id, opportunity_id=opp.id)
         db.session.add(saved)
         db.session.commit()
 
@@ -94,11 +92,11 @@ def save_opportunity(opp_id):
 @jwt_required()
 def unsave_opportunity(opp_id):
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
-    saved = SavedOpportunity.query.filter_by(student_id=user.profile.id, opportunity_id=opp_id).first()
+    saved = SavedOpportunity.query.filter_by(student_id=profile.id, opportunity_id=opp_id).first()
     if saved:
         db.session.delete(saved)
         db.session.commit()
@@ -110,16 +108,16 @@ def unsave_opportunity(opp_id):
 @jwt_required()
 def get_saved_opportunities():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.profile:
+    profile = get_student_profile(user_id)
+    if not profile:
         return error_response("Student profile required", 400)
 
-    saved_items = SavedOpportunity.query.filter_by(student_id=user.profile.id).order_by(SavedOpportunity.saved_at.desc()).all()
+    saved_items = SavedOpportunity.query.filter_by(student_id=profile.id).order_by(SavedOpportunity.saved_at.desc()).all()
     results = []
     for item in saved_items:
         if item.opportunity:
-            data = item.opportunity.to_dict(student_id=user.profile.id)
-            score_data = gemini_service.calculate_match_score(user.profile.to_dict(), data)
+            data = item.opportunity.to_dict(student_id=profile.id)
+            score_data = gemini_service.calculate_match_score(profile.to_dict(), data)
             data.update(score_data)
             results.append(data)
 
