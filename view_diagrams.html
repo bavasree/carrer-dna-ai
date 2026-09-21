@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPPORA AI — Project Report Diagrams Gallery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #0b1120;
+            color: #f8fafc;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            padding-bottom: 80px;
+        }
+        .header-box {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 40px 20px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .diag-card {
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .diag-card:hover {
+            box-shadow: 0 15px 35px -5px rgba(37, 99, 235, 0.2);
+        }
+        .diag-header {
+            background: #0f172a;
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .diag-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin: 0;
+        }
+        .diag-body {
+            padding: 24px;
+            background: #ffffff;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .diag-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .diag-footer {
+            padding: 16px 24px;
+            background: #1e293b;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .diag-caption {
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+        .diag-desc {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            margin: 0;
+            line-height: 1.5;
+        }
+        .badge-cat {
+            background: #2563eb;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .btn-open-doc {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+        }
+        .btn-open-doc:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <div class="container">
+            <span class="badge-cat mb-2 d-inline-block">Academic Project Report Visualizer</span>
+            <h1 class="display-5 fw-bold text-white mb-2">OPPORA AI</h1>
+            <p class="lead text-muted mb-4">Complete Suite of System Architecture, DFD, UML, ER, and AI Pipeline Diagrams</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="OPPORA_AI_Project_Report_Diagrams.docx" class="btn-open-doc">
+                    <i class="bi bi-file-earmark-word"></i> Open Word Document (.docx)
+                </a>
+                <a href="diagram_images/" class="btn btn-outline-light d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-folder2-open"></i> Browse PNG Images Folder
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- 1. System Architecture -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">1. System Architecture Diagram</h2>
+                <span class="badge-cat">Architecture</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/1_system_architecture.png" alt="System Architecture Diagram" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 1.1: Multi-Tier Decoupled System Architecture of OPPORA AI</div>
+                <p class="diag-desc">Illustrates the 5-Tier layout: Client Web Browser, Gateway Security with Flask-JWT-Extended, Application Controller Blueprints, Services (GeminiService, RecommendationEngine, PDFService), Google Gemini Generative AI Platform, and MySQL Persistence Layer.</p>
+            </div>
+        </div>
+
+        <!-- 2.1 Level 0 DFD -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">2.1 Data Flow Diagram (DFD) — Level 0 Context Diagram</h2>
+                <span class="badge-cat">DFD</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/2a_dfd_level_0.png" alt="Level 0 DFD" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 2.1: Level 0 Context Data Flow Diagram for OPPORA AI System</div>
+                <p class="diag-desc">Models boundary data flows between Student User, Administrator, Google Gemini AI API, and the Central System (0.0).</p>
+            </div>
+        </div>
+
+        <!-- 2.2 Level 1 DFD -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">2.2 Data Flow Diagram (DFD) — Level 1 Subsystem Flow</h2>
+                <span class="badge-cat">DFD</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/2b_dfd_level_1.png" alt="Level 1 DFD" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 2.2: Level 1 Subsystem Data Flow Diagram across 8 Functional Processes and 7 Data Stores</div>
+                <p class="diag-desc">Decomposes the system into 8 sub-processes (1.0 to 8.0) and demonstrates connections to data stores D1 (Users) through D7 (Applications).</p>
+            </div>
+        </div>
+
+        <!-- 2.3 Level 2 DFD AI & Rec -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">2.3 Data Flow Diagram (DFD) — Level 2.1 AI Career Analysis & Recommendation Engine</h2>
+                <span class="badge-cat">DFD</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/2c_dfd_level_2_rec.png" alt="Level 2 DFD Rec" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 2.3: Level 2 Decomposed DFD for Processes 3.0 (AI Career Analysis) and 4.0 (Hybrid Recommendations)</div>
+                <p class="diag-desc">Detailed data paths for profile DNA aggregation, Gemini prompt construction, 4-factor match scoring, and post-filtering.</p>
+            </div>
+        </div>
+
+        <!-- 2.4 Level 2 DFD Resume & Kanban -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">2.4 Data Flow Diagram (DFD) — Level 2.2 AI Resume Builder & Kanban Application Tracker</h2>
+                <span class="badge-cat">DFD</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/2d_dfd_level_2_resume.png" alt="Level 2 DFD Resume" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 2.4: Level 2 Decomposed DFD for Processes 6.0 (Resume Builder) and 7.0 (Kanban Application Pipeline)</div>
+                <p class="diag-desc">Details action-verb bullet refinement, ATS scoring, ReportLab PDF generation, card state transitions, and conversion metrics calculation.</p>
+            </div>
+        </div>
+
+        <!-- 3.1 UML Use Case -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">3.1 UML Use Case Diagram</h2>
+                <span class="badge-cat">UML</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/3a_uml_use_case.png" alt="UML Use Case Diagram" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 3.1: UML Use Case Diagram Depicting Student, Administrator, and Gemini AI Engine Interactions</div>
+                <p class="diag-desc">Visualizes 21 discrete use cases across Student, Administrator, and Gemini AI Engine actors with include/extend relationships.</p>
+            </div>
+        </div>
+
+        <!-- 3.2 UML Class -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">3.2 UML Class Diagram</h2>
+                <span class="badge-cat">UML</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/3b_uml_class.png" alt="UML Class Diagram" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 3.2: UML Class Diagram Depicting Domain Models, Service Classes, Attributes, Methods, and Associations</div>
+                <p class="diag-desc">Shows 14 normalized entity models, 3 singleton service classes, complete attribute signatures, methods, and multiplicities.</p>
+            </div>
+        </div>
+
+        <!-- 3.3 Sequence 1 -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">3.3 UML Sequence Diagram 1 — Authentication, Profile Sync & AI Career Readiness Audit</h2>
+                <span class="badge-cat">UML</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/3c_uml_seq_auth_analysis.png" alt="Sequence Diagram 1" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 3.3: UML Sequence Diagram: User Authentication, Profile Sync & AI Career Readiness Assessment</div>
+                <p class="diag-desc">Chronological call sequence from JWT login to Gemini API generation with 10s timeout handling and Chart.js radar rendering.</p>
+            </div>
+        </div>
+
+        <!-- 3.4 Sequence 2 -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">3.4 UML Sequence Diagram 2 — Hybrid Opportunity Matching & Kanban Pipeline State Transition</h2>
+                <span class="badge-cat">UML</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/3d_uml_seq_rec_kanban.png" alt="Sequence Diagram 2" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 3.4: UML Sequence Diagram: Hybrid Opportunity Matching and Drag-and-Drop Kanban State Transition</div>
+                <p class="diag-desc">Step-by-step messaging for 4-factor scoring, opportunity feed generation, and drag-and-drop Kanban status updates.</p>
+            </div>
+        </div>
+
+        <!-- 3.5 Sequence 3 -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">3.5 UML Sequence Diagram 3 — AI Resume Enhancement, ATS Scoring & ReportLab PDF Generation</h2>
+                <span class="badge-cat">UML</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/3e_uml_seq_resume_pdf.png" alt="Sequence Diagram 3" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 3.5: UML Sequence Diagram: AI Resume Bullet Optimization, ATS Scoring & ReportLab PDF Generation</div>
+                <p class="diag-desc">Details bullet enhancement with action verbs, ATS keyword score diagnostic, and ReportLab BytesIO stream compilation.</p>
+            </div>
+        </div>
+
+        <!-- 4. ER Diagram -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">4. Entity-Relationship (ER) Diagram</h2>
+                <span class="badge-cat">Database</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/4_er_diagram.png" alt="Entity Relationship Diagram" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 4.1: Complete Normalized Entity-Relationship (ER) Diagram with Referential Integrity Constraints</div>
+                <p class="diag-desc">Comprehensive 3NF normalized schema for 14 MySQL tables with primary keys, foreign keys, and 1:1, 1:N, N:M associations.</p>
+            </div>
+        </div>
+
+        <!-- 5.1 Recommendation Pipeline -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">5.1 Hybrid Career Opportunity Recommendation Pipeline</h2>
+                <span class="badge-cat">AI Pipeline</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/5a_rec_pipeline.png" alt="Recommendation Pipeline" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 5.1: Two-Stage Multi-Facet SQL Pre-Filtering and 4-Factor AI Semantic Match Scoring Pipeline</div>
+                <p class="diag-desc">5-Stage recommendation algorithm: SQL pre-filters -> DNA vectorization -> 4-factor scoring (45/30/15/10) -> explainability -> post-filter pruning.</p>
+            </div>
+        </div>
+
+        <!-- 5.2 Career Analysis Workflow -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">5.2 AI Career Analysis & Readiness Diagnostic Workflow</h2>
+                <span class="badge-cat">AI Pipeline</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/5b_career_analysis_flow.png" alt="Career Analysis Workflow" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 5.2: AI Career Readiness Diagnostic Flow with Multi-Model Fallback and Radar Rendering</div>
+                <p class="diag-desc">Profile data ingestion, strict-JSON prompt construction, multi-model waterfall fallback, heuristic backup calculation, and Chart.js radar rendering.</p>
+            </div>
+        </div>
+
+        <!-- 5.3 Career Roadmap Timeline -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">5.3 Career Roadmap Timeline & 7-Stage Progression Flow</h2>
+                <span class="badge-cat">AI Pipeline</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/5c_roadmap_timeline.png" alt="Career Roadmap Timeline" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 5.3: 7-Stage Chronological Career Roadmap Milestone Timeline & Mathematical Progress Model</div>
+                <p class="diag-desc">7 sequential stages from Current Skill Assessment to Placement Preparation, incorporating the mathematical progress formula.</p>
+            </div>
+        </div>
+
+        <!-- 5.4 AI Resume Builder Pipeline -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">5.4 AI Resume Builder → PDF Generation Pipeline</h2>
+                <span class="badge-cat">AI Pipeline</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/5d_resume_pdf_pipeline.png" alt="Resume Builder Pipeline" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 5.4: Split-Screen Resume Editor, Gemini ATS Enhancer, and ReportLab PDF Generation Flow</div>
+                <p class="diag-desc">Live split-screen document editor, Gemini action-verb injector, ATS keyword audit, and ReportLab Modern/Classic styling engine.</p>
+            </div>
+        </div>
+
+        <!-- 5.5 Kanban Flow -->
+        <div class="diag-card">
+            <div class="diag-header">
+                <h2 class="diag-title">5.5 Application Tracking Kanban State Machine Flow</h2>
+                <span class="badge-cat">System Flow</span>
+            </div>
+            <div class="diag-body">
+                <img src="diagram_images/5e_kanban_flow.png" alt="Kanban Flow" class="diag-img">
+            </div>
+            <div class="diag-footer">
+                <div class="diag-caption">Figure 5.5: Finite State Machine Workflow for 5-Column Kanban Recruitment Lifecycle</div>
+                <p class="diag-desc">State transitions across Applied -> In Progress -> Interview Scheduled -> Offer Received / Rejected -> Archived with live metrics.</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
