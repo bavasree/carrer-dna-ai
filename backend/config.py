@@ -29,7 +29,7 @@ class Config:
     
     # Default to MySQL via PyMySQL
     default_mysql_uri = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
-    raw_db_url = os.getenv('DATABASE_URL')
+    raw_db_url = os.getenv('DATABASE_URL', '').strip() or None
     
     # On Vercel with no DATABASE_URL set, use the TiDB Cloud database directly
     if not raw_db_url and (os.getenv('VERCEL') or os.getenv('VERCEL_ENV')):
