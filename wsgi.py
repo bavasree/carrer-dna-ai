@@ -20,6 +20,26 @@ from app.models import db
 env_name = os.getenv('FLASK_ENV', 'production')
 app = create_app(env_name)
 
+@app.route('/healthz')
+def healthz():
+    """Debug endpoint: shows which DB host is configured (masked credentials)."""
+    import re
+    db_url = app.config.get('SQLALCHEMY_DATABASE_URI', 'NOT SET')
+    # Mask password for security
+    masked = re.sub(r'://([^:]+):([^@]+)@', r'://\1:***@', db_url)
+    vercel = os.getenv('VERCEL', 'not-set')
+    vercel_env = os.getenv('VERCEL_ENV', 'not-set')
+    raw_db_env = os.getenv('DATABASE_URL', 'not-set')
+    masked_raw = re.sub(r'://([^:]+):([^@]+)@', r'://\1:***@', raw_db_env) if raw_db_env else 'not-set'
+    from flask import jsonify
+    return jsonify({
+        "status": "ok",
+        "db_url": masked,
+        "raw_DATABASE_URL": masked_raw,
+        "VERCEL": vercel,
+        "VERCEL_ENV": vercel_env
+    })
+
 # Entry point for WSGI / local test
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
