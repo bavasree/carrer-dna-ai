@@ -52,9 +52,10 @@ class Config:
         "pool_pre_ping": True,
     }
     if "tidbcloud.com" in SQLALCHEMY_DATABASE_URI or "ssl" in SQLALCHEMY_DATABASE_URI:
-        import ssl
+        # Use PyMySQL-compatible SSL dict (no strict cert verification for serverless envs)
         engine_options["connect_args"] = {
-            "ssl": ssl.create_default_context()
+            "ssl_verify_cert": False,
+            "ssl_verify_identity": False,
         }
     SQLALCHEMY_ENGINE_OPTIONS = engine_options
     
