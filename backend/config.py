@@ -2,9 +2,11 @@ import os
 from datetime import timedelta
 from dotenv import load_dotenv
 
-# Load environment variables from .env
+# Load environment variables from .env ONLY when NOT running on Vercel.
+# On Vercel, env vars are injected directly; loading a stale .env would override them.
 basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'), override=True)
+if not os.getenv('VERCEL') and not os.getenv('VERCEL_ENV'):
+    load_dotenv(os.path.join(basedir, '.env'), override=True)
 
 class Config:
     """Base application configuration."""
