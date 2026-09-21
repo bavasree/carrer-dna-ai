@@ -13,13 +13,13 @@ def view_db():
         port=3306,
         user='root',
         password='root',
-        database='career_dna_ai',
+        database='oppora_ai',
         cursorclass=pymysql.cursors.DictCursor
     )
     cursor = conn.cursor()
 
     print("=" * 80)
-    print(" [*] CAREER DNA AI - MYSQL DATABASE VIEWER")
+    print(" [*] OPPORA AI - MYSQL DATABASE VIEWER")
     print("=" * 80)
 
     # 1. Tables List

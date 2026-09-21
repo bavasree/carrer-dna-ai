@@ -4,7 +4,7 @@ import os
 import re
 import time
 
-logger = logging.getLogger('career_dna_ai.gemini')
+logger = logging.getLogger('oppora_ai.gemini')
 logger.setLevel(logging.INFO)
 
 class GeminiService:
@@ -664,8 +664,8 @@ Respond ONLY with valid JSON.
                 "title": "Application Strategy & Targeted Outreach",
                 "description": "Target high-growth startups and tech leaders with customized resumes, portfolio links, and warm referrals.",
                 "action_items": [
-                    {"id": "s5_1", "text": "Tailor resume bullets using action verbs and quantified metrics via Career DNA AI Builder.", "completed": False},
-                    {"id": "s5_2", "text": "Set up alerts and apply to 15+ target opportunities via Career DNA AI tracker.", "completed": False},
+                    {"id": "s5_1", "text": "Tailor resume bullets using action verbs and quantified metrics via OPPORA AI Builder.", "completed": False},
+                    {"id": "s5_2", "text": "Set up alerts and apply to 15+ target opportunities via OPPORA AI tracker.", "completed": False},
                     {"id": "s5_3", "text": "Connect with 10 alumni and industry engineers on LinkedIn for warm referrals.", "completed": False}
                 ],
                 "resources": [

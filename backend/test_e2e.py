@@ -53,11 +53,11 @@ def run_tests():
 
     # 2. Auth Module (Student Login & Admin Login)
     print("\n--- Testing Module 1: Authentication ---")
-    student_auth = make_req('/api/auth/login', 'POST', {'email': 'student@careerdna.ai', 'password': 'Student@123'})
+    student_auth = make_req('/api/auth/login', 'POST', {'email': 'student@oppora.ai', 'password': 'Student@123'})
     assert_test("Student Login", student_auth.get('success') is True)
     student_token = student_auth.get('data', {}).get('token')
 
-    admin_auth = make_req('/api/auth/login', 'POST', {'email': 'admin@careerdna.ai', 'password': 'Admin@123'})
+    admin_auth = make_req('/api/auth/login', 'POST', {'email': 'admin@oppora.ai', 'password': 'Admin@123'})
     assert_test("Admin Login", admin_auth.get('success') is True)
     admin_token = admin_auth.get('data', {}).get('token')
 

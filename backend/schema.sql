@@ -1,8 +1,8 @@
--- Career DNA AI Database Schema
+-- OPPORA AI Database Schema
 -- Run in MySQL: SOURCE schema.sql; or mysql -u root -p < schema.sql
 
-CREATE DATABASE IF NOT EXISTS career_dna_ai CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE career_dna_ai;
+CREATE DATABASE IF NOT EXISTS oppora_ai CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE oppora_ai;
 
 -- 1. Users Table
 CREATE TABLE IF NOT EXISTS users (

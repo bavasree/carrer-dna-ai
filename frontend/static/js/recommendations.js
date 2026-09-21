@@ -1,5 +1,5 @@
 /**
- * Career DNA AI — Opportunities & Hackathons Explorer
+ * OPPORA AI — Opportunities & Hackathons Explorer
  * Clean, Simple, and Focused on Essential Opportunity Information
  */
 

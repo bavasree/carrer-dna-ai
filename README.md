@@ -1,6 +1,6 @@
-# Career DNA AI — AI-Powered Student Opportunity Recommendation System
+# OPPORA AI — AI-Powered Student Opportunity Recommendation System
 
-**Career DNA AI** is an end-to-end, production-ready web application designed to bridge the gap between students and high-impact career opportunities. By analyzing student profiles with Google Gemini AI, the platform evaluates Career Readiness Scores, diagnoses skill gaps, recommends curated opportunities (internships, hackathons, certifications, courses, competitions, and jobs), builds personalized 7-stage career roadmaps, enhances resumes with action-verb intelligence, exports styled PDF resumes via ReportLab, and tracks applications via an interactive Kanban board.
+**OPPORA AI** is an end-to-end, production-ready web application designed to bridge the gap between students and high-impact career opportunities. By analyzing student profiles with Google Gemini AI, the platform evaluates Career Readiness Scores, diagnoses skill gaps, recommends curated opportunities (internships, hackathons, certifications, courses, competitions, and jobs), builds personalized 7-stage career roadmaps, enhances resumes with action-verb intelligence, exports styled PDF resumes via ReportLab, and tracks applications via an interactive Kanban board.
 
 ---
 
@@ -9,7 +9,7 @@
 1. **User Authentication & Role Management (Module 1)**
    - Secure student and admin registration with Werkzeug password hashing.
    - JWT-based authentication (`Flask-JWT-Extended`) with automatic session protection and expiration handling.
-   - 1-click Demo credentials for rapid testing (`student@careerdna.ai` and `admin@careerdna.ai`).
+   - 1-click Demo credentials for rapid testing (`student@oppora.ai` and `admin@oppora.ai`).
 
 2. **Student Profile & Completion Calibration (Module 2)**
    - Full student profile management: personal details, academics, CGPA, graduation year, social links (GitHub, LinkedIn, Portfolio).
@@ -78,7 +78,7 @@
 ## 📁 Project Structure
 
 ```
-career-dna-ai/
+oppora-ai/
 ├── backend/
 │   ├── app/
 │   │   ├── models/                  # Normalized SQLAlchemy Models
@@ -100,73 +100,76 @@ career-dna-ai/
 │   │   │   ├── resume_routes.py     # /api/resume
 │   │   │   ├── application_routes.py# /api/applications
 │   │   │   ├── admin_routes.py      # /api/admin
-│   │   │   └── view_routes.py       # Jinja2 Page Routes
-│   │   ├── services/
+│   │   │   └── view_routes.py       # Frontend Jinja template rendering
+│   │   ├── services/                # Business logic & AI services
 │   │   │   ├── __init__.py
-│   │   │   ├── gemini_service.py    # Centralized Gemini AI client with strict JSON & fallbacks
-│   │   │   ├── recommendation_engine.py # Rule-based skill overlap & match calculations
-│   │   │   └── pdf_service.py       # ReportLab Modern & Classic PDF resumes
-│   │   ├── utils/
-│   │   │   ├── __init__.py
-│   │   │   ├── auth_decorators.py   # @role_required('admin'|'student')
-│   │   │   ├── response.py          # Standardized {success, data, message} JSON response helper
-│   │   │   └── validators.py        # Input payload validators
-│   │   └── __init__.py              # Flask app factory mapping frontend/templates & static
-│   ├── config.py                    # App configuration
-│   ├── run.py                       # Server entrypoint
-│   ├── seed.py                      # Database seeder (18+ opportunities, skills, demo accounts)
-│   ├── schema.sql                   # Standalone raw MySQL schema DDL script
-│   ├── requirements.txt             # Python dependencies
-│   ├── .env                         # Local environment variables
-│   └── .env.example                 # Environment variables template
+│   │   │   ├── gemini_service.py    # Gemini LLM engine with fallback heuristic
+│   │   │   ├── recommendation_engine.py # Hybrid multi-stage matching engine
+│   │   │   └── pdf_service.py       # ReportLab PDF resume generator
+│   │   └── utils/                   # Decorators, auth, and validators
+│   │       ├── __init__.py
+│   │       ├── auth_decorators.py   # @jwt_required, @role_required
+│   │       └── validators.py        # Input validation helpers
+│   ├── config.py                    # Multi-environment configuration
+│   ├── run.py                       # Application entry point
+│   ├── seed.py                      # Database seeder (skills, categories, opportunities, demo users)
+│   ├── schema.sql                   # Raw MySQL schema definitions
+│   └── requirements.txt             # Backend Python dependencies
 ├── frontend/
 │   ├── static/
 │   │   ├── css/
-│   │   │   ├── variables.css        # Design tokens & color variables
-│   │   │   └── style.css            # Global CSS, dark theme, Kanban board, paper preview
-│   │   └── js/
-│   │       ├── api.js               # Central fetch client with JWT & toast notifications
-│   │       ├── auth.js              # Login, register, demo autofill
-│   │       ├── onboarding.js        # Multi-step onboarding wizard
-│   │       ├── dashboard.js         # Student dashboard & Chart.js gauge
-│   │       ├── profile.js           # Profile, skills, projects, certs CRUD
-│   │       ├── career_analysis.js   # AI Career analysis, radar chart, skill gap deep dive
-│   │       ├── recommendations.js   # Opportunity filtering, sorting, bookmarks
-│   │       ├── roadmap.js           # 7-stage roadmap interactive timeline
-│   │       ├── resume_builder.js    # Split-screen AI resume editor & PDF download
-│   │       ├── applications.js      # Drag-and-drop Kanban tracker
-│   │       └── admin.js             # Admin management & opportunity CRUD
+│   │   │   ├── variables.css        # Design tokens, themes, glow effects
+│   │   │   └── style.css            # Custom glassmorphism, responsive styles
+│   │   ├── js/
+│   │   │   ├── api.js               # Central API client & toast/loader feedback
+│   │   │   ├── auth.js              # Login, register & demo quick-fillers
+│   │   │   ├── dashboard.js         # Student dashboard metrics & chart renderers
+│   │   │   ├── onboarding.js        # Multi-step onboarding wizard
+│   │   │   ├── profile.js           # Student profile & skills/projects CRUD
+│   │   │   ├── career_analysis.js   # AI analysis radar & skill-gap modals
+│   │   │   ├── recommendations.js   # Filterable opportunity catalog
+│   │   │   ├── roadmap.js           # 7-stage interactive timeline & milestones
+│   │   │   ├── resume_builder.js    # AI resume editor & PDF preview/download
+│   │   │   ├── applications.js      # Drag-and-drop Kanban tracker
+│   │   │   └── admin.js             # Admin management & metrics
+│   │   └── img/
+│   │       ├── logo.svg             # Main vector logo
+│   │       └── logo-icon.svg        # Compact icon
 │   └── templates/
-│       ├── partials/
-│       │   ├── navbar.html
-│       │   ├── footer.html
-│       │   ├── toast.html
-│       │   └── loading_modal.html
-│       ├── admin/
-│       │   ├── dashboard.html       # Admin metrics view
-│       │   └── opportunities.html   # Admin opportunity management table
-│       ├── base.html                # Master layout
+│       ├── base.html                # Base layout template
 │       ├── index.html               # Landing page
-│       ├── login.html               # Sign In page
-│       ├── register.html            # Sign Up page
-│       ├── onboarding.html          # Onboarding wizard
-│       ├── dashboard.html           # Student Dashboard
+│       ├── login.html               # Authentication login
+│       ├── register.html            # User registration
+│       ├── onboarding.html          # Profile onboarding wizard
+│       ├── dashboard.html           # Main student dashboard
 │       ├── profile.html             # Profile management
-│       ├── career_analysis.html     # AI analysis & radar chart
+│       ├── career_analysis.html     # AI analysis & radar
 │       ├── recommendations.html     # Opportunity explorer
-│       ├── roadmap.html             # Career roadmap
-│       ├── resume_builder.html      # Resume builder & live preview
-│       └── applications.html        # Kanban Application tracker
+│       ├── roadmap.html             # Interactive career roadmap
+│       ├── resume_builder.html      # Resume editor & ATS checker
+│       ├── applications.html        # Kanban tracker
+│       ├── admin/
+│       │   ├── dashboard.html       # Admin stats & control panel
+│       │   ├── students.html        # Registered student directory
+│       │   ├── opportunities.html   # Opportunity CRUD manager
+│       │   └── applications.html    # Global application monitor
+│       └── partials/
+│           ├── navbar.html          # Navigation header
+│           ├── footer.html          # Site footer
+│           ├── toast.html           # Bootstrap toast container
+│           ├── loading_modal.html   # AI loading spinner modal
+│           └── admin_nav.html       # Admin sub-navigation
+├── view_database.py                 # Utility script to inspect MySQL database tables
 └── README.md
 ```
 
 ---
 
-## 🚀 Setup & Installation Instructions
+## 🚀 Quick Start Guide
 
 ### 1. Prerequisites
-- **Python 3.10+** (Python 3.14 supported)
-- **MySQL Server 8.0+** running locally on port `3306`
+- Python 3.10+ installed
+- MySQL Server 8.0+ running locally (or remote MySQL connection)
 - A web browser (Chrome, Edge, Firefox)
 
 ### 2. Clone or Navigate to Project
@@ -196,8 +199,8 @@ Create or edit `backend/.env` (a pre-configured template is available at `backen
 # Flask
 FLASK_APP=run.py
 FLASK_ENV=development
-SECRET_KEY=career-dna-super-secret-jwt-and-session-key-2025
-JWT_SECRET_KEY=career-dna-jwt-secret-key-change-in-production-2025
+SECRET_KEY=oppora-super-secret-jwt-and-session-key-2025
+JWT_SECRET_KEY=oppora-jwt-secret-key-change-in-production-2025
 JWT_ACCESS_TOKEN_EXPIRES=86400
 
 # MySQL Database
@@ -205,8 +208,8 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=root
-DB_NAME=career_dna_ai
-DATABASE_URL=mysql+pymysql://root:root@127.0.0.1:3306/career_dna_ai
+DB_NAME=oppora_ai
+DATABASE_URL=mysql+pymysql://root:root@127.0.0.1:3306/oppora_ai
 
 # Google Gemini API Key (Optional: leave empty to use built-in intelligent heuristic fallback)
 # Get a free key at: https://aistudio.google.com/app/apikey
@@ -239,8 +242,8 @@ Open your browser and navigate to:
 
 | Role | Email | Password | Access Level |
 |---|---|---|---|
-| **Student** | `student@careerdna.ai` | `Student@123` | Full student experience (Profile, AI Analysis, Recommendations, Roadmap, Resume, Kanban Tracker) |
-| **Admin** | `admin@careerdna.ai` | `Admin@123` | Full admin rights (Opportunity CRUD, Analytics, Bulk Status) |
+| **Student** | `student@oppora.ai` | `Student@123` | Full student experience (Profile, AI Analysis, Recommendations, Roadmap, Resume, Kanban Tracker) |
+| **Admin** | `admin@oppora.ai` | `Admin@123` | Full admin rights (Opportunity CRUD, Analytics, Bulk Status) |
 
 *You can also click the **⚡ Student Demo** or **⚡ Admin Demo** buttons directly on the Login page for 1-click authentication.*
 

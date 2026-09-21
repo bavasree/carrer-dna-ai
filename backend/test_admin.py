@@ -25,11 +25,11 @@ def run_admin_comprehensive_tests():
     with app.app_context():
         # 1. Authentication & Security
         print("\n--- 1. Authentication & Role-Guards ---")
-        s_res = client.post('/api/auth/login', json={'email': 'student@careerdna.ai', 'password': 'Student@123'})
+        s_res = client.post('/api/auth/login', json={'email': 'student@oppora.ai', 'password': 'Student@123'})
         s_tok = (s_res.get_json() or {}).get('data', {}).get('token')
         s_headers = {'Authorization': f'Bearer {s_tok}'}
 
-        a_res = client.post('/api/auth/login', json={'email': 'admin@careerdna.ai', 'password': 'Admin@123'})
+        a_res = client.post('/api/auth/login', json={'email': 'admin@oppora.ai', 'password': 'Admin@123'})
         a_tok = (a_res.get_json() or {}).get('data', {}).get('token')
         a_headers = {'Authorization': f'Bearer {a_tok}'}
 

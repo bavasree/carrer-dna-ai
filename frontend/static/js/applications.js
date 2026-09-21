@@ -701,7 +701,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="p-3 bg-surface-elevated rounded border border-subtle d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <small class="text-muted d-block" style="font-size: 0.72rem;">ATTACHED RESUME</small>
-                        <span class="text-light small fw-medium"><i class="bi bi-file-earmark-pdf text-danger me-1"></i>${app.resume_filename === 'ai_generated' ? 'Career DNA AI Verified Resume' : (app.resume_filename || 'Uploaded Resume')}</span>
+                        <span class="text-light small fw-medium"><i class="bi bi-file-earmark-pdf text-danger me-1"></i>${app.resume_filename === 'ai_generated' ? 'OPPORA AI Verified Resume' : (app.resume_filename || 'Uploaded Resume')}</span>
                     </div>
                     <a href="${app.resume_url}" target="_blank" class="btn btn-sm btn-gradient-primary">
                         <i class="bi bi-file-earmark-arrow-down me-1"></i>View / Download Resume

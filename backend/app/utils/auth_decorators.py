@@ -79,7 +79,7 @@ def get_student_profile(user_id=None):
 
     # 4. If User STILL not found (e.g. fresh ephemeral serverless instance), recreate User
     if not user:
-        email = (claims.get('email') or f"student_{uid}@careerdna.ai").strip().lower()
+        email = (claims.get('email') or f"student_{uid}@oppora.ai").strip().lower()
         role = claims.get('role', 'student')
         try:
             user = User(

@@ -5,12 +5,12 @@ from sqlalchemy import or_
 from ..models import Opportunity, SavedOpportunity
 from .gemini_service import gemini_service
 
-logger = logging.getLogger('career_dna_ai.recommendation')
+logger = logging.getLogger('oppora_ai.recommendation')
 
 class RecommendationEngine:
     """
     Production-grade hybrid recommendation engine combining rule-based multi-facet
-    filtering with AI-driven DNA match scoring, deadline tracking, and deep explainability.
+    filtering with AI-driven opportunity match scoring, deadline tracking, and deep explainability.
     """
 
     def __init__(self):
@@ -21,7 +21,7 @@ class RecommendationEngine:
         Main recommendation pipeline:
         1. Fetch active, non-expired opportunities from DB.
         2. Apply multi-facet database & keyword filters (type, mode, fee, stipend, location, search query, category).
-        3. Score opportunities against student's Career DNA (skills, goal, degree, CGPA, projects).
+        3. Score opportunities against student's OPPORA profile (skills, goal, degree, CGPA, projects).
         4. Apply post-scoring filters (min_match, skills chip filter, deadline urgency).
         5. Sort by selected criteria (match %, deadline, compensation/prizes, newest).
         """
@@ -185,7 +185,7 @@ class RecommendationEngine:
         return scored_opportunities[:limit]
 
     def get_opportunity_detail(self, opp_id, profile=None):
-        """Retrieve full details for a single opportunity including Career DNA match diagnostics."""
+        """Retrieve full details for a single opportunity including OPPORA AI match diagnostics."""
         opp = Opportunity.query.get(opp_id)
         if not opp:
             return None

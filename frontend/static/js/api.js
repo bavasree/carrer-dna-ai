@@ -1,5 +1,5 @@
 /**
- * Central API Client & UI Helper for Career DNA AI
+ * Central API Client & UI Helper for OPPORA AI
  * Handles JWT authentication, request headers, error handling,
  * Bootstrap toast notifications, and AI loading modal states.
  */
@@ -8,8 +8,8 @@ const API_BASE = '/api';
 
 class ApiClient {
     constructor() {
-        this.tokenKey = 'career_dna_token';
-        this.userKey = 'career_dna_user';
+        this.tokenKey = 'oppora_token';
+        this.userKey = 'oppora_user';
     }
 
     getToken() {

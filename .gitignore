@@ -27,3 +27,6 @@ venv.bak/
 # Uploads & Temp
 frontend/static/uploads/
 /tmp/
+scratch/
+*.docx
+diagram_images/

@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const demoStudentBtn = document.getElementById('demoStudentBtn');
         if (demoStudentBtn) {
             demoStudentBtn.addEventListener('click', () => {
-                document.getElementById('loginEmail').value = 'student@careerdna.ai';
+                document.getElementById('loginEmail').value = 'student@oppora.ai';
                 document.getElementById('loginPassword').value = 'Student@123';
             });
         }
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const demoAdminBtn = document.getElementById('demoAdminBtn');
         if (demoAdminBtn) {
             demoAdminBtn.addEventListener('click', () => {
-                document.getElementById('loginEmail').value = 'admin@careerdna.ai';
+                document.getElementById('loginEmail').value = 'admin@oppora.ai';
                 document.getElementById('loginPassword').value = 'Admin@123';
             });
         }

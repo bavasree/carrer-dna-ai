@@ -927,21 +927,21 @@ def seed_database():
         print("[*] Seeding Demo Users (Admin & Student)...")
 
         # 1. Admin User
-        admin_user = User.query.filter_by(email="admin@careerdna.ai").first()
+        admin_user = User.query.filter_by(email="admin@oppora.ai").first()
         if not admin_user:
-            admin_user = User(email="admin@careerdna.ai", role="admin")
+            admin_user = User(email="admin@oppora.ai", role="admin")
             admin_user.set_password("Admin@123")
             db.session.add(admin_user)
-            print("  Created Admin: admin@careerdna.ai / Admin@123")
+            print("  Created Admin: admin@oppora.ai / Admin@123")
 
         # 2. Student User with Full Profile
-        student_user = User.query.filter_by(email="student@careerdna.ai").first()
+        student_user = User.query.filter_by(email="student@oppora.ai").first()
         if not student_user:
-            student_user = User(email="student@careerdna.ai", role="student")
+            student_user = User(email="student@oppora.ai", role="student")
             student_user.set_password("Student@123")
             db.session.add(student_user)
             db.session.flush()
-            print("  Created Student: student@careerdna.ai / Student@123")
+            print("  Created Student: student@oppora.ai / Student@123")
 
             profile = StudentProfile(
                 user_id=student_user.id,
@@ -991,11 +991,11 @@ def seed_database():
             # Student Projects
             project1 = StudentProject(
                 student_id=profile.id,
-                title="Career DNA AI — Intelligent Opportunity Platform",
+                title="OPPORA AI — Intelligent Student Opportunity Platform",
                 description="AI-driven career matching platform and student opportunity engine using Flask, PyMySQL, and Gemini AI.",
                 tech_stack="Python, Flask, JavaScript, MySQL, Docker, REST APIs",
-                github_url="https://github.com/alexmorgan-dev/career-dna-ai",
-                live_url="https://careerdna.ai",
+                github_url="https://github.com/alexmorgan-dev/oppora-ai",
+                live_url="https://oppora.ai",
                 role="Lead Full-Stack Developer"
             )
             project2 = StudentProject(
@@ -1033,7 +1033,7 @@ def seed_database():
                     status="applied",
                     applied_date=datetime.utcnow().date(),
                     salary_offered="₹1,25,000/month",
-                    notes="Applied via Career DNA AI portal with tailored ATS resume."
+                    notes="Applied via OPPORA AI portal with tailored ATS resume."
                 )
                 db.session.add(app1)
 

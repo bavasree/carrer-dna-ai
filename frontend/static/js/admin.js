@@ -1,5 +1,5 @@
 /**
- * Admin Portal Management Module — Career DNA AI
+ * Admin Portal Management Module — OPPORA AI
  * Robust, High-Contrast, Error-Free Architecture for Dashboard, Students, Opportunities, Applications, and Resume Documents.
  */
 
@@ -291,7 +291,7 @@ async function openStudentDetailModal(userId) {
                         </div>
                         <div>
                             <small class="text-white text-uppercase fw-bold d-block" style="font-size: 0.72rem; letter-spacing: 0.04em;">
-                                ${p.has_uploaded_resume ? 'ATTACHED OFFICIAL RESUME' : 'CAREER DNA PROFILE RESUME'}
+                                ${p.has_uploaded_resume ? 'ATTACHED OFFICIAL RESUME' : 'OPPORA AI PROFILE RESUME'}
                             </small>
                             <span class="text-white fw-semibold small">
                                 ${p.has_uploaded_resume ? (p.resume_original_name || p.resume_filename) : 'Live Auto-Generated AI Profile Resume'}
@@ -981,7 +981,7 @@ function openAdminAppDetailModal(app, onUpdateCallback) {
             <div class="p-3 bg-surface-elevated rounded border border-subtle d-flex justify-content-between align-items-center mb-3">
                 <div>
                     <small class="text-light text-uppercase fw-semibold d-block" style="font-size: 0.72rem; letter-spacing: 0.03em;">ATTACHED CANDIDATE RESUME</small>
-                    <span class="text-white small fw-semibold"><i class="bi bi-file-earmark-pdf text-danger me-1"></i>${app.resume_filename === 'ai_generated' ? 'Career DNA AI Verified Resume' : (app.resume_filename || 'Uploaded Resume')}</span>
+                    <span class="text-white small fw-semibold"><i class="bi bi-file-earmark-pdf text-danger me-1"></i>${app.resume_filename === 'ai_generated' ? 'OPPORA AI Verified Resume' : (app.resume_filename || 'Uploaded Resume')}</span>
                 </div>
                 <a href="${app.resume_url}" target="_blank" class="btn btn-sm btn-gradient-primary fw-bold shadow-sm">
                     <i class="bi bi-file-earmark-arrow-down me-1"></i>Download Resume

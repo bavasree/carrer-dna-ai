@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         finishBtn.addEventListener('click', async () => {
             finishBtn.disabled = true;
             finishBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving & Launching AI Analysis...';
-            window.api.showAILoader('Creating your Career DNA & running initial AI Career Readiness analysis...');
+            window.api.showAILoader('Calibrating your OPPORA AI profile & running initial AI Career Readiness analysis...');
 
             const profilePayload = {
                 full_name: document.getElementById('obFullName').value.trim(),

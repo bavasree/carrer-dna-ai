@@ -24,14 +24,14 @@ def run_tests():
     with app.app_context():
         # 1. Login Student & Admin
         print("\n--- 1. Authentication ---")
-        s_login_res = client.post('/api/auth/login', json={'email': 'student@careerdna.ai', 'password': 'Student@123'})
+        s_login_res = client.post('/api/auth/login', json={'email': 'student@oppora.ai', 'password': 'Student@123'})
         s_data = s_login_res.get_json() or {}
         student_token = s_data.get('data', {}).get('token')
         assert_test("Student Login", s_login_res.status_code == 200 and student_token is not None)
 
         s_headers = {'Authorization': f'Bearer {student_token}'}
 
-        a_login_res = client.post('/api/auth/login', json={'email': 'admin@careerdna.ai', 'password': 'Admin@123'})
+        a_login_res = client.post('/api/auth/login', json={'email': 'admin@oppora.ai', 'password': 'Admin@123'})
         a_data = a_login_res.get_json() or {}
         admin_token = a_data.get('data', {}).get('token')
         assert_test("Admin Login", a_login_res.status_code == 200 and admin_token is not None)
@@ -39,7 +39,7 @@ def run_tests():
         a_headers = {'Authorization': f'Bearer {admin_token}'}
 
         # Clear prior test applications
-        student_user = User.query.filter_by(email='student@careerdna.ai').first()
+        student_user = User.query.filter_by(email='student@oppora.ai').first()
         if student_user and student_user.profile:
             Application.query.filter_by(student_id=student_user.profile.id).delete()
             db.session.commit()
@@ -67,7 +67,7 @@ def run_tests():
             'opportunity_id': hackathon_opp.id,
             'opportunity_type': 'hackathon',
             'full_name': 'Alex Morgan',
-            'email': 'student@careerdna.ai',
+            'email': 'student@oppora.ai',
             'phone': '+1 555-019-2834',
             'college_name': 'Stanford University',
             'team_name': 'Team ByteCrafters',
@@ -101,7 +101,7 @@ def run_tests():
             'opportunity_id': intern_opp.id,
             'opportunity_type': 'internship',
             'full_name': 'Alex Morgan',
-            'email': 'student@careerdna.ai',
+            'email': 'student@oppora.ai',
             'phone': '+1 555-019-2834',
             'college_name': 'Stanford University',
             'degree': 'B.S. Computer Science',
@@ -130,7 +130,7 @@ def run_tests():
             'opportunity_id': job_opp.id,
             'opportunity_type': 'job',
             'full_name': 'Alex Morgan',
-            'email': 'student@careerdna.ai',
+            'email': 'student@oppora.ai',
             'phone': '+1 555-019-2834',
             'education': 'B.S. Computer Science, Stanford',
             'work_experience_years': 'Fresh Graduate / Entry Level',
@@ -154,7 +154,7 @@ def run_tests():
         # TEST 5: Data Persistence Across Re-Login
         print("\n--- TEST 5: Persistence Across Logout & Re-Login ---")
         # Generate new JWT session
-        fresh_login = client.post('/api/auth/login', json={'email': 'student@careerdna.ai', 'password': 'Student@123'})
+        fresh_login = client.post('/api/auth/login', json={'email': 'student@oppora.ai', 'password': 'Student@123'})
         fresh_token = (fresh_login.get_json() or {}).get('data', {}).get('token')
         fresh_headers = {'Authorization': f'Bearer {fresh_token}'}
 
