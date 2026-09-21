@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env
 basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'))
+load_dotenv(os.path.join(basedir, '.env'), override=True)
 
 class Config:
     """Base application configuration."""
@@ -23,7 +23,7 @@ class Config:
     DB_PASSWORD = os.getenv('DB_PASSWORD', '')
     DB_HOST = os.getenv('DB_HOST', '127.0.0.1')
     DB_PORT = os.getenv('DB_PORT', '3306')
-    DB_NAME = os.getenv('DB_NAME', 'oppora_ai')
+    DB_NAME = os.getenv('DB_NAME', 'career_dna_ai')
     
     # Default to MySQL via PyMySQL
     default_mysql_uri = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"

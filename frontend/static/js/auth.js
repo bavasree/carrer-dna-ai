@@ -1,5 +1,5 @@
 /**
- * Authentication Module: Login, Registration & Demo Fillers
+ * Authentication Module: Login & Registration
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                window.api.showToast('Please enter your email and password.', 'warning');
+                return;
+            }
 
             try {
                 submitBtn.disabled = true;
@@ -41,20 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Quick Demo Fillers
-        const demoStudentBtn = document.getElementById('demoStudentBtn');
-        if (demoStudentBtn) {
-            demoStudentBtn.addEventListener('click', () => {
-                document.getElementById('loginEmail').value = 'student@oppora.ai';
-                document.getElementById('loginPassword').value = 'Student@123';
-            });
-        }
-
-        const demoAdminBtn = document.getElementById('demoAdminBtn');
-        if (demoAdminBtn) {
-            demoAdminBtn.addEventListener('click', () => {
-                document.getElementById('loginEmail').value = 'admin@oppora.ai';
-                document.getElementById('loginPassword').value = 'Admin@123';
+        // Password show/hide toggle
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+        const passwordInput = document.getElementById('loginPassword');
+        if (togglePasswordBtn && passwordInput) {
+            togglePasswordBtn.addEventListener('click', () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                togglePasswordIcon.className = isPassword ? 'bi bi-eye-slash' : 'bi bi-eye';
             });
         }
     }

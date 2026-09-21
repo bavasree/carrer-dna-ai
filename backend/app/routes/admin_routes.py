@@ -89,7 +89,7 @@ def get_admin_stats():
             'email': u.email,
             'degree': p.degree if p else 'N/A',
             'branch': p.branch if p else 'N/A',
-            'career_goal': p.career_goal or (p.target_role if p else None) or 'Software Engineer',
+            'career_goal': (p.career_goal or p.target_role) if p else 'Software Engineer',
             'completion_pct': p.profile_completion_pct if p else 0,
             'is_active': u.is_active,
             'created_at': u.created_at.strftime('%b %d, %Y') if u.created_at else 'Recent'

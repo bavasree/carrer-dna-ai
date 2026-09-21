@@ -148,14 +148,27 @@ async function initStudentsDirectory() {
     const searchInput = document.getElementById('studentSearchInput');
     const branchFilter = document.getElementById('studentBranchFilter');
     const yearFilter = document.getElementById('studentYearFilter');
+    const statusFilter = document.getElementById('studentStatusFilter');
     const countBadge = document.getElementById('studentCountBadge');
     const refreshBtn = document.getElementById('refreshStudentsBtn');
+    const selectAllChk = document.getElementById('selectAllStudents');
+    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+    const selectedCountEl = document.getElementById('selectedCount');
 
     let allStudents = [];
+    let selectedUserIds = new Set();
+
+    function updateBulkDeleteUI() {
+        const count = selectedUserIds.size;
+        if (selectedCountEl) selectedCountEl.textContent = count;
+        if (bulkDeleteBtn) bulkDeleteBtn.classList.toggle('d-none', count === 0);
+    }
 
     async function loadStudents() {
+        selectedUserIds.clear();
+        updateBulkDeleteUI();
         if (tableBody) {
-            tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-5"><div class="spinner-border text-primary"></div><p class="text-secondary small mt-2">Loading students directory...</p></td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-5"><div class="spinner-border text-primary"></div><p class="text-secondary small mt-2">Loading students directory...</p></td></tr>`;
         }
 
         try {
@@ -163,16 +176,17 @@ async function initStudentsDirectory() {
             if (searchInput && searchInput.value.trim()) params.append('search', searchInput.value.trim());
             if (branchFilter && branchFilter.value !== 'all') params.append('branch', branchFilter.value);
             if (yearFilter && yearFilter.value !== 'all') params.append('year', yearFilter.value);
+            if (statusFilter && statusFilter.value !== 'all') params.append('status', statusFilter.value);
 
             const res = await window.api.get(`/admin/students?${params.toString()}`);
             allStudents = res.data?.students || [];
 
-            if (countBadge) countBadge.textContent = allStudents.length;
+            if (countBadge) countBadge.textContent = `${allStudents.length} student${allStudents.length !== 1 ? 's' : ''} found`;
 
             if (allStudents.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center py-5 text-secondary">
+                        <td colspan="9" class="text-center py-5 text-secondary">
                             <i class="bi bi-person-x fs-3 d-block mb-2 text-secondary"></i>
                             No students match the current filters.
                         </td>
@@ -182,12 +196,14 @@ async function initStudentsDirectory() {
             }
 
             tableBody.innerHTML = allStudents.map(s => `
-                <tr>
+                <tr data-user-id="${s.user_id}" class="${s.is_active ? '' : 'opacity-60'}">
+                    <td>
+                        <input type="checkbox" class="form-check-input student-checkbox" value="${s.user_id}">
+                    </td>
                     <td>
                         <div class="fw-bold text-white">${s.full_name}</div>
                         <small class="text-secondary">${s.email}</small>
-                        ${s.phone ? `<small class="text-secondary d-block mt-0.5" style="font-size: 0.76rem;"><i class="bi bi-telephone me-1 text-primary"></i>${s.phone}</small>` : ''}
-                        ${s.has_uploaded_resume ? `<div class="mt-1"><span class="badge badge-emerald-subtle py-0.5 px-2" style="font-size: 0.70rem;"><i class="bi bi-file-earmark-pdf me-1"></i>Resume Attached</span></div>` : ''}
+                        ${s.has_uploaded_resume ? `<div class="mt-1"><span class="badge badge-emerald-subtle py-0.5 px-2" style="font-size: 0.70rem;"><i class="bi bi-file-earmark-pdf me-1"></i>Resume</span></div>` : ''}
                     </td>
                     <td>
                         <div class="text-white small fw-medium">${s.college_name || 'University Student'}</div>
@@ -195,38 +211,85 @@ async function initStudentsDirectory() {
                     </td>
                     <td>
                         <span class="badge bg-surface-elevated text-white border border-subtle fw-semibold px-2 py-1">${s.graduation_year || 'N/A'}</span>
-                        ${s.cgpa ? `<small class="text-secondary d-block mt-1 fw-medium">CGPA: <b class="text-white">${s.cgpa}</b></small>` : ''}
+                        ${s.cgpa ? `<small class="text-secondary d-block mt-1">CGPA: <b class="text-white">${s.cgpa}</b></small>` : ''}
                     </td>
                     <td>
-                        <div class="d-flex flex-wrap gap-1" style="max-width: 200px;">
+                        <div class="d-flex flex-wrap gap-1" style="max-width: 180px;">
                             ${(s.skills || []).slice(0, 3).map(sk => `<span class="badge badge-primary-subtle py-0.5 px-2" style="font-size: 0.72rem;">${sk}</span>`).join('')}
                             ${(s.skills || []).length > 3 ? `<span class="badge bg-surface-elevated text-white py-0.5 px-1.5" style="font-size: 0.70rem;">+${s.skills.length - 3}</span>` : ''}
                         </div>
                     </td>
                     <td>
-                        <span class="text-white small fw-medium">${s.career_goal || 'Software Engineer'}</span>
+                        <span class="text-white small fw-medium">${s.career_goal || 'Not specified'}</span>
                     </td>
                     <td>
-                        <span class="badge badge-cyan-subtle px-2 py-1 fw-bold">${s.applications_count || 0} submissions</span>
+                        <span class="badge badge-cyan-subtle px-2 py-1 fw-bold">${s.applications_count || 0}</span>
+                    </td>
+                    <td>
+                        <span class="badge ${s.is_active ? 'badge-emerald-subtle' : 'badge-rose-subtle'} px-2 py-1 fw-semibold">
+                            ${s.is_active ? 'Active' : 'Deactivated'}
+                        </span>
                     </td>
                     <td class="text-end">
-                        <div class="btn-group btn-group-sm">
-                            <button class="btn btn-sm btn-gradient-primary text-white fw-bold view-student-btn" data-user-id="${s.user_id}">
-                                <i class="bi bi-person-badge me-1"></i>Full Profile
+                        <div class="d-flex gap-1 justify-content-end">
+                            <button class="btn btn-sm btn-glass text-light view-student-btn" data-user-id="${s.user_id}" title="View Full Profile">
+                                <i class="bi bi-person-badge text-primary"></i>
                             </button>
-                            <a href="${s.resume_url || `/api/resume/student/${s.id}/pdf`}" target="_blank" class="btn btn-sm btn-glass text-light fw-bold" title="Open Attached Resume">
-                                <i class="bi bi-file-earmark-pdf text-danger"></i>
-                            </a>
+                            <button class="btn btn-sm btn-glass text-light toggle-status-btn" data-user-id="${s.user_id}" data-is-active="${s.is_active}" data-name="${s.full_name}" title="${s.is_active ? 'Deactivate' : 'Activate'} Account">
+                                <i class="bi ${s.is_active ? 'bi-toggle-on text-success' : 'bi-toggle-off text-secondary'}"></i>
+                            </button>
+                            <button class="btn btn-sm btn-glass text-danger delete-student-btn" data-user-id="${s.user_id}" data-name="${s.full_name}" title="Delete Student Account">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
             `).join('');
 
-            attachStudentViewListeners(tableBody);
+            attachStudentActionListeners(tableBody, loadStudents);
+
+            // Checkbox handling
+            tableBody.querySelectorAll('.student-checkbox').forEach(chk => {
+                chk.addEventListener('change', () => {
+                    const uid = chk.value;
+                    if (chk.checked) selectedUserIds.add(uid);
+                    else selectedUserIds.delete(uid);
+                    updateBulkDeleteUI();
+                });
+            });
 
         } catch (err) {
-            if (tableBody) tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-danger">Error loading students directory.</td></tr>`;
+            if (tableBody) tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-danger">Error loading students directory.</td></tr>`;
         }
+    }
+
+    // Select All
+    if (selectAllChk) {
+        selectAllChk.addEventListener('change', () => {
+            tableBody.querySelectorAll('.student-checkbox').forEach(chk => {
+                chk.checked = selectAllChk.checked;
+                if (selectAllChk.checked) selectedUserIds.add(chk.value);
+                else selectedUserIds.delete(chk.value);
+            });
+            updateBulkDeleteUI();
+        });
+    }
+
+    // Bulk Delete
+    if (bulkDeleteBtn) {
+        bulkDeleteBtn.addEventListener('click', async () => {
+            const ids = [...selectedUserIds];
+            if (ids.length === 0) return;
+            if (!confirm(`Are you sure you want to permanently delete ${ids.length} student account(s)? This cannot be undone.`)) return;
+            try {
+                await Promise.all(ids.map(uid => window.api.delete(`/admin/students/${uid}`)));
+                window.api.showToast(`${ids.length} student account(s) deleted.`, 'success');
+                selectedUserIds.clear();
+                loadStudents();
+            } catch (err) {
+                window.api.showToast('Failed to delete some accounts.', 'danger');
+            }
+        });
     }
 
     if (searchInput) {
@@ -239,23 +302,83 @@ async function initStudentsDirectory() {
 
     if (branchFilter) branchFilter.addEventListener('change', loadStudents);
     if (yearFilter) yearFilter.addEventListener('change', loadStudents);
+    if (statusFilter) statusFilter.addEventListener('change', loadStudents);
     if (refreshBtn) refreshBtn.addEventListener('click', loadStudents);
 
     loadStudents();
 }
 
-function attachStudentViewListeners(container) {
+function attachStudentActionListeners(container, reloadFn) {
+    // View Profile
     container.querySelectorAll('.view-student-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const userId = btn.getAttribute('data-user-id');
-            openStudentDetailModal(userId);
+            openStudentDetailModal(userId, reloadFn);
+        });
+    });
+
+    // Toggle Activate/Deactivate
+    container.querySelectorAll('.toggle-status-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const userId = btn.getAttribute('data-user-id');
+            const isActive = btn.getAttribute('data-is-active') === 'true';
+            const name = btn.getAttribute('data-name') || 'this student';
+            const action = isActive ? 'deactivate' : 'activate';
+            if (!confirm(`Are you sure you want to ${action} ${name}'s account?`)) return;
+            try {
+                await window.api.put(`/admin/students/${userId}/status`, { is_active: !isActive });
+                window.api.showToast(`Account ${action}d successfully.`, 'success');
+                if (reloadFn) reloadFn();
+            } catch (err) {
+                window.api.showToast(`Failed to ${action} account.`, 'danger');
+            }
+        });
+    });
+
+    // Delete Student
+    container.querySelectorAll('.delete-student-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const userId = btn.getAttribute('data-user-id');
+            const name = btn.getAttribute('data-name') || 'this student';
+            showDeleteStudentModal(userId, name, reloadFn);
         });
     });
 }
 
-async function openStudentDetailModal(userId) {
+function showDeleteStudentModal(userId, name, reloadFn) {
+    const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteStudentModal'));
+    const nameEl = document.getElementById('deleteStudentName');
+    const confirmBtn = document.getElementById('confirmDeleteStudentBtn');
+    if (nameEl) nameEl.textContent = name;
+    if (confirmBtn) {
+        // Remove previous listener
+        const newBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+        newBtn.addEventListener('click', async () => {
+            newBtn.disabled = true;
+            newBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Deleting...';
+            try {
+                await window.api.delete(`/admin/students/${userId}`);
+                window.api.showToast(`${name}'s account deleted permanently.`, 'success');
+                modal.hide();
+                // Also close profile modal if open
+                const profileModal = bootstrap.Modal.getInstance(document.getElementById('studentDetailsModal'));
+                if (profileModal) profileModal.hide();
+                if (reloadFn) reloadFn();
+            } catch (err) {
+                window.api.showToast('Failed to delete account.', 'danger');
+                newBtn.disabled = false;
+                newBtn.innerHTML = '<i class="bi bi-trash me-1"></i>Delete Permanently';
+            }
+        });
+    }
+    modal.show();
+}
+
+async function openStudentDetailModal(userId, reloadFn) {
     const modalEl = document.getElementById('studentDetailsModal');
     const bodyEl = document.getElementById('studentDetailsModalBody');
+    const titleEl = document.getElementById('studentDetailsModalTitle');
     if (!modalEl || !bodyEl) return;
 
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
@@ -379,6 +502,39 @@ async function openStudentDetailModal(userId) {
                 `}
             </div>
         `;
+
+        // Wire up modal footer buttons
+        const modalDeleteBtn = document.getElementById('modalDeleteStudentBtn');
+        const modalToggleBtn = document.getElementById('modalToggleStatusBtn');
+
+        if (modalDeleteBtn) {
+            const newDel = modalDeleteBtn.cloneNode(true);
+            modalDeleteBtn.parentNode.replaceChild(newDel, modalDeleteBtn);
+            newDel.addEventListener('click', () => {
+                modal.hide();
+                showDeleteStudentModal(userId, sData.profile?.full_name || sData.email || 'Student', reloadFn);
+            });
+        }
+
+        if (modalToggleBtn) {
+            const isActive = sData.is_active;
+            const newTog = modalToggleBtn.cloneNode(true);
+            newTog.innerHTML = `<i class="bi ${isActive ? 'bi-toggle-off' : 'bi-toggle-on'} me-1"></i>${isActive ? 'Deactivate' : 'Activate'} Account`;
+            newTog.className = `btn btn-sm ${isActive ? 'btn-warning' : 'btn-success'} fw-semibold`;
+            modalToggleBtn.parentNode.replaceChild(newTog, modalToggleBtn);
+            newTog.addEventListener('click', async () => {
+                const action = isActive ? 'deactivate' : 'activate';
+                if (!confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} this student's account?`)) return;
+                try {
+                    await window.api.put(`/admin/students/${userId}/status`, { is_active: !isActive });
+                    window.api.showToast(`Account ${action}d successfully.`, 'success');
+                    modal.hide();
+                    if (reloadFn) reloadFn();
+                } catch (err) {
+                    window.api.showToast('Action failed.', 'danger');
+                }
+            });
+        }
 
     } catch (err) {
         bodyEl.innerHTML = `<div class="alert alert-danger">Failed to load student details.</div>`;

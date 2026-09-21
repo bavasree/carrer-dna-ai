@@ -14,9 +14,12 @@
                 <i class="bi bi-people me-1 text-primary"></i>STUDENT DIRECTORY
             </span>
             <h3 class="fw-bold text-light mb-1">Registered Students Directory</h3>
-            <p class="text-secondary small mb-0">Search, filter, and inspect registered student profiles, skills, career goals, and applied opportunities</p>
+            <p class="text-secondary small mb-0">Search, filter, inspect, and manage all registered student accounts</p>
         </div>
         <div class="d-flex gap-2">
+            <button class="btn btn-danger btn-sm fw-medium d-none" id="bulkDeleteBtn">
+                <i class="bi bi-trash me-1"></i>Delete Selected (<span id="selectedCount">0</span>)
+            </button>
             <a href="/admin/opportunities" class="btn btn-glass text-light fw-medium">
                 <i class="bi bi-briefcase me-1 text-info"></i>Manage Opportunities
             </a>
@@ -35,18 +38,18 @@
                     <input type="text" class="form-control text-white" id="studentSearchInput" placeholder="Search by name, email, skills, department, or goal...">
                 </div>
             </div>
-            <div class="col-6 col-lg-3 col-md-3">
+            <div class="col-6 col-lg-2 col-md-3">
                 <select class="form-select text-white" id="studentBranchFilter">
-                    <option value="all">All Departments / Branches</option>
-                    <option value="Information Technology">Information Technology (IT)</option>
-                    <option value="Computer Science">Computer Science (CSE)</option>
-                    <option value="Data Science">Data Science & AI (AIDS)</option>
-                    <option value="Software Engineering">Software Engineering (SE)</option>
-                    <option value="Electronics">Electronics & Communication (ECE)</option>
-                    <option value="Electrical">Electrical & Electronics (EEE)</option>
-                    <option value="Mechanical">Mechanical Engineering (MECH)</option>
-                    <option value="Civil">Civil Engineering (CIVIL)</option>
-                    <option value="Cyber Security">Cyber Security (CYS)</option>
+                    <option value="all">All Departments</option>
+                    <option value="Information Technology">IT</option>
+                    <option value="Computer Science">CSE</option>
+                    <option value="Data Science">AIDS / Data Science</option>
+                    <option value="Software Engineering">Software Engineering</option>
+                    <option value="Electronics">ECE</option>
+                    <option value="Electrical">EEE</option>
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Civil">Civil</option>
+                    <option value="Cyber Security">Cyber Security</option>
                 </select>
             </div>
             <div class="col-6 col-lg-2 col-md-3">
@@ -58,12 +61,21 @@
                     <option value="2028">Class of 2028</option>
                 </select>
             </div>
-            <div class="col-lg-2 col-md-12 text-end">
-                <span class="badge bg-surface-elevated text-white border border-subtle px-3 py-2 fw-semibold" id="studentCountBadge">
-                    Loading students...
-                </span>
-                <button class="btn btn-sm btn-glass text-light fw-medium" id="refreshStudentsBtn"><i class="bi bi-arrow-clockwise me-1 text-primary"></i>Refresh</button>
+            <div class="col-6 col-lg-2 col-md-3">
+                <select class="form-select text-white" id="studentStatusFilter">
+                    <option value="all">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Deactivated</option>
+                </select>
             </div>
+            <div class="col-6 col-lg-1 col-md-12 text-end">
+                <button class="btn btn-sm btn-glass text-light fw-medium w-100" id="refreshStudentsBtn">
+                    <i class="bi bi-arrow-clockwise me-1 text-primary"></i>Refresh
+                </button>
+            </div>
+        </div>
+        <div class="mt-2">
+            <span class="badge bg-surface-elevated text-white border border-subtle px-3 py-2 fw-semibold" id="studentCountBadge">Loading...</span>
         </div>
     </div>
 
@@ -73,19 +85,23 @@
             <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
                 <thead class="bg-surface-elevated text-light small fw-bold">
                     <tr>
+                        <th style="width:40px;">
+                            <input type="checkbox" class="form-check-input" id="selectAllStudents" title="Select All">
+                        </th>
                         <th>STUDENT NAME & CONTACT</th>
                         <th>COLLEGE & PROGRAM</th>
                         <th>GRAD YEAR / CGPA</th>
-                        <th>VERIFIED SKILLS</th>
+                        <th>SKILLS</th>
                         <th>CAREER GOAL</th>
-                        <th>SUBMISSIONS</th>
+                        <th>APPS</th>
+                        <th>STATUS</th>
                         <th class="text-end">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody id="registeredStudentsTableBody">
                     <tr>
-                        <td colspan="7" class="text-center py-5 text-secondary">
-                            <div class="spinner-border spinner-border-sm text-primary me-2"></div>Loading registered students directory...
+                        <td colspan="9" class="text-center py-5 text-secondary">
+                            <div class="spinner-border spinner-border-sm text-primary me-2"></div>Loading registered students...
                         </td>
                     </tr>
                 </tbody>
@@ -101,7 +117,7 @@
             <div class="modal-header border-subtle bg-surface-elevated">
                 <div>
                     <span class="badge bg-surface-elevated text-primary border border-primary border-opacity-40 text-uppercase mb-1 fw-bold">STUDENT PROFILE INSPECTOR</span>
-                    <h5 class="modal-title fw-bold text-white">Full Student Career Profile</h5>
+                    <h5 class="modal-title fw-bold text-white" id="studentDetailsModalTitle">Full Student Career Profile</h5>
                 </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -110,6 +126,38 @@
             </div>
             <div class="modal-footer border-subtle">
                 <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning btn-sm fw-semibold" id="modalToggleStatusBtn">
+                    <i class="bi bi-toggle-on me-1"></i>Toggle Status
+                </button>
+                <button type="button" class="btn btn-danger btn-sm fw-semibold" id="modalDeleteStudentBtn">
+                    <i class="bi bi-trash me-1"></i>Delete Account
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteStudentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-surface text-light border border-danger border-opacity-50 shadow-xl">
+            <div class="modal-header border-subtle bg-surface-elevated">
+                <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="text-light mb-1">Are you sure you want to permanently delete this student account?</p>
+                <p class="fw-bold text-white" id="deleteStudentName">—</p>
+                <div class="alert alert-danger border-0 small py-2 mt-3">
+                    <i class="bi bi-exclamation-circle me-1"></i>
+                    This will permanently delete all their profile data, skills, applications, and roadmap. <strong>This cannot be undone.</strong>
+                </div>
+            </div>
+            <div class="modal-footer border-subtle">
+                <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger fw-semibold" id="confirmDeleteStudentBtn">
+                    <i class="bi bi-trash me-1"></i>Delete Permanently
+                </button>
             </div>
         </div>
     </div>
