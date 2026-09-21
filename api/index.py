@@ -14,11 +14,12 @@ app = create_app(env_name)
 
 # Ensure database tables exist if database is connected
 with app.app_context():
-    try:
-        db.create_all()
-    except Exception as e:
-        # Avoid crashing startup if DB is offline or cold-starting
-        print(f"[*] Database init check: {e}")
+    pass
+    # We already seeded tables; avoid cold-start timeouts on Vercel
+    # try:
+    #     db.create_all()
+    # except Exception as e:
+    #     print(f"[*] Database init check: {e}")
 
 # Entry point for WSGI / local test
 if __name__ == '__main__':
