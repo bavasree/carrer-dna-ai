@@ -129,6 +129,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    const btnViewProfileResume = document.getElementById('btnViewProfileResume');
+    if (btnViewProfileResume) {
+        btnViewProfileResume.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                btnViewProfileResume.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+                btnViewProfileResume.disabled = true;
+                
+                // Fetch the PDF securely with JWT token
+                const blob = await window.api.request('/profile/resume', { responseType: 'blob' });
+                
+                // Create object URL and open in new tab
+                const blobUrl = URL.createObjectURL(blob);
+                const newWindow = window.open(blobUrl, '_blank');
+                if (!newWindow) {
+                    window.api.showToast('Please allow popups to view the resume', 'warning');
+                }
+                
+                // Reset button
+                btnViewProfileResume.innerHTML = '<i class="bi bi-box-arrow-up-right me-1"></i>View / Open';
+                btnViewProfileResume.disabled = false;
+            } catch (err) {
+                // api.js already shows toast on error
+                btnViewProfileResume.innerHTML = '<i class="bi bi-box-arrow-up-right me-1"></i>View / Open';
+                btnViewProfileResume.disabled = false;
+            }
+        });
+    }
+
     function populateForm(p) {
         if (!p) return;
         document.getElementById('profFullName').value = p.full_name || '';
